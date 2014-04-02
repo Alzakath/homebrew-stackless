@@ -1,6 +1,6 @@
 require 'formula'
 
-class Python < Formula
+class Stackless < Formula
   homepage 'http://www.stackless.com'
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '2.7-slp'
   url 'http://www.stackless.com/binaries/stackless-276r3-export.tar.bz2'
