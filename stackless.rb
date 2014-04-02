@@ -4,8 +4,8 @@ class Stackless < Formula
   VER='2.7'
   homepage 'http://www.stackless.com'
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '#{VER}-slp'
-  url 'http://www.stackless.com/binaries/stackless-276r3-export.tar.bz2'
-  md5 '901d848df1618111f757ed39799eb870'
+  url 'http://www.stackless.com/binaries/stackless-275-export.tar.bz2'
+  sha1 '96010ff159a57363a64f81d0db491dbc4182383d'
 
   option :universal
   option 'quicktest', "Run `make quicktest` after the build (for devs; may fail)"
