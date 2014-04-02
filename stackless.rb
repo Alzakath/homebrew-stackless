@@ -1,8 +1,9 @@
 require 'formula'
 
 class Stackless < Formula
+  VER='2.7'
   homepage 'http://www.stackless.com'
-  head 'http://hg.python.org/stackless', :using => :hg, :branch => '2.7-slp'
+  head 'http://hg.python.org/stackless', :using => :hg, :branch => '#{VER}-slp'
   url 'http://www.stackless.com/binaries/stackless-276r3-export.tar.bz2'
   md5 '901d848df1618111f757ed39799eb870'
 
@@ -20,8 +21,8 @@ class Stackless < Formula
   depends_on 'homebrew/dupes/tcl-tk' if build.with? 'brewed-tk'
   depends_on :x11 if build.with? 'brewed-tk' and Tab.for_name('tcl-tk').used_options.include?('with-x11')
 
-  skip_clean 'bin/pip-slp', 'bin/pip-2.7-slp'
-  skip_clean 'bin/easy_install-slp', 'bin/easy_install-2.7-slp'
+  skip_clean 'bin/pip-slp', 'bin/pip-#{VER}-slp'
+  skip_clean 'bin/easy_install-slp', 'bin/easy_install-#{VER}-slp'
 
   resource 'setuptools' do
     url 'https://pypi.python.org/packages/source/s/setuptools/setuptools-2.2.tar.gz'
@@ -34,17 +35,17 @@ class Stackless < Formula
   end
 
   # Backported security fix for CVE-2014-1912: http://bugs.python.org/issue20246
-  # patch :p0 do
-  #   url "https://gist.githubusercontent.com/leepa/9351856/raw/7f9130077fd760fcf9a25f50b69d9c77b155fbc5/CVE-2014-1912.patch"
-  #   sha1 "db25abc381f62e9f501ad56aaa2537e48e1b0889"
-  # end
+  patch :p0 do
+    url "https://gist.githubusercontent.com/leepa/9351856/raw/7f9130077fd760fcf9a25f50b69d9c77b155fbc5/CVE-2014-1912.patch"
+    sha1 "db25abc381f62e9f501ad56aaa2537e48e1b0889"
+  end
 
   # Patch to disable the search for Tk.framework, since Homebrew's Tk is
   # a plain unix build. Remove `-lX11`, too because our Tk is "AquaTk".
   patch :DATA if build.with? "brewed-tk"
 
   def lib_cellar
-    prefix/"Frameworks/Python.framework/Versions/2.7-slp/lib/python2.7"
+    prefix/"Frameworks/Python.framework/Versions/#{VER}-slp/lib/python#{VER}"
   end
 
   def site_packages_cellar
@@ -53,7 +54,7 @@ class Stackless < Formula
 
   # The HOMEBREW_PREFIX location of site-packages.
   def site_packages
-    HOMEBREW_PREFIX/"lib/python2.7-slp/site-packages"
+    HOMEBREW_PREFIX/"lib/python#{VER}-slp/site-packages"
   end
 
   def install
@@ -123,7 +124,7 @@ class Stackless < Formula
 
     # Remove the site-packages that Python created in its Cellar.
     site_packages_cellar.rmtree
-    # Create a site-packages in HOMEBREW_PREFIX/lib/python2.7/site-packages
+    # Create a site-packages in HOMEBREW_PREFIX/lib/python#{VER}/site-packages
     site_packages.mkpath
     # Symlink the prefix site-packages into the cellar.
     site_packages_cellar.parent.install_symlink site_packages
@@ -142,7 +143,7 @@ class Stackless < Formula
     setup_args = [ "-s", "setup.py", "--no-user-cfg", "install", "--force", "--verbose",
                    "--install-scripts=#{bin}", "--install-lib=#{site_packages}" ]
 
-    resource('setuptools').stage { system "#{bin}/python-slp", *setup_args }
+    resource('setuptools').stage { system "#{bin}/python-slp", *setup_args, "--" }
     resource('pip').stage { system "#{bin}/python-slp", *setup_args }
 
     # And now we write the distutils.cfg
@@ -242,7 +243,7 @@ class Stackless < Formula
                '     You should `unset PYTHONPATH` to fix this.')
       else:
           # Only do this for a brewed python:
-          opt_executable = '#{opt_bin}/python2.7-slp'
+          opt_executable = '#{opt_bin}/python#{VER}-slp'
           if os.path.commonprefix([os.path.realpath(e) for e in [opt_executable, sys.executable]]).startswith('#{rack}'):
               # Remove /System site-packages, and the Cellar site-packages
               # which we moved to lib/pythonX.Y/site-packages. Further, remove
@@ -259,7 +260,7 @@ class Stackless < Formula
               # Assume Framework style build (default since months in brew)
               try:
                   from _sysconfigdata import build_time_vars
-                  build_time_vars['LINKFORSHARED'] = '-u _PyMac_Error #{opt_prefix}/Frameworks/Python.framework/Versions/2.7-slp/Python'
+                  build_time_vars['LINKFORSHARED'] = '-u _PyMac_Error #{opt_prefix}/Frameworks/Python.framework/Versions/#{VER}-slp/Python'
               except:
                   pass  # remember: don't print here. Better to fail silently.
 
