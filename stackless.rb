@@ -2,6 +2,7 @@ require 'formula'
 
 class Stackless < Formula
   VER='2.7'
+  FRAMEWORK='Stackless'
   homepage 'http://www.stackless.com'
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '#{VER}-slp'
   url 'http://www.stackless.com/binaries/stackless-275-export.tar.bz2'
@@ -21,8 +22,8 @@ class Stackless < Formula
   depends_on 'homebrew/dupes/tcl-tk' if build.with? 'brewed-tk'
   depends_on :x11 if build.with? 'brewed-tk' and Tab.for_name('tcl-tk').used_options.include?('with-x11')
 
-  skip_clean 'bin/pip-slp', 'bin/pip-#{VER}-slp'
-  skip_clean 'bin/easy_install-slp', 'bin/easy_install-#{VER}-slp'
+  skip_clean 'bin/pip', 'bin/pip-#{VER}'
+  skip_clean 'bin/easy_install', 'bin/easy_install-#{VER}'
 
   resource 'setuptools' do
     url 'https://pypi.python.org/packages/source/s/setuptools/setuptools-2.2.tar.gz'
@@ -45,7 +46,7 @@ class Stackless < Formula
   patch :DATA if build.with? "brewed-tk"
 
   def lib_cellar
-    prefix/"Frameworks/Python.framework/Versions/#{VER}-slp/lib/python#{VER}"
+    prefix/"Frameworks/#{FRAMEWORK}.framework/Versions/#{VER}/lib/python#{VER}"
   end
 
   def site_packages_cellar
@@ -53,9 +54,9 @@ class Stackless < Formula
   end
 
   # The HOMEBREW_PREFIX location of site-packages.
-  def site_packages
-    HOMEBREW_PREFIX/"lib/python#{VER}-slp/site-packages"
-  end
+  # def site_packages
+  #   HOMEBREW_PREFIX/"lib/python#{VER}/site-packages"
+  # end
 
   def install
     opoo 'The given option --with-poll enables a somewhat broken poll() on OS X (http://bugs.python.org/issue5154).' if build.with? 'poll'
@@ -71,6 +72,7 @@ class Stackless < Formula
              --datarootdir=#{share}
              --datadir=#{share}
              --enable-framework=#{frameworks}
+             --with-framework-name=#{FRAMEWORK}
            ]
 
     args << '--without-gcc' if ENV.compiler == :clang
@@ -123,28 +125,28 @@ class Stackless < Formula
     # software survives minor updates, such as going from 2.7.0 to 2.7.1:
 
     # Remove the site-packages that Python created in its Cellar.
-    site_packages_cellar.rmtree
+    # site_packages_cellar.rmtree
     # Create a site-packages in HOMEBREW_PREFIX/lib/python#{VER}/site-packages
-    site_packages.mkpath
+    # site_packages.mkpath
     # Symlink the prefix site-packages into the cellar.
-    site_packages_cellar.parent.install_symlink site_packages
+    # site_packages_cellar.parent.install_symlink site_packages
 
     # Write our sitecustomize.py
-    rm_rf Dir["#{site_packages}/sitecustomize.py[co]"]
-    (site_packages/"sitecustomize.py").atomic_write(sitecustomize)
+    rm_rf Dir["#{site_packages_cellar}/sitecustomize.py[co]"]
+    (site_packages_cellar/"sitecustomize.py").atomic_write(sitecustomize)
 
     # Remove old setuptools installations that may still fly around and be
     # listed in the easy_install.pth. This can break setuptools build with
     # zipimport.ZipImportError: bad local file header
     # setuptools-0.9.5-py3.3.egg
-    rm_rf Dir["#{site_packages}/setuptools*"]
-    rm_rf Dir["#{site_packages}/distribute*"]
+    rm_rf Dir["#{site_packages_cellar}/setuptools*"]
+    rm_rf Dir["#{site_packages_cellar}/distribute*"]
 
     setup_args = [ "-s", "setup.py", "--no-user-cfg", "install", "--force", "--verbose",
-                   "--install-scripts=#{bin}", "--install-lib=#{site_packages}" ]
+                   "--install-scripts=#{bin}", "--install-lib=#{site_packages_cellar}" ]
 
-    resource('setuptools').stage { system "#{bin}/python-slp", *setup_args, "--" }
-    resource('pip').stage { system "#{bin}/python-slp", *setup_args }
+    resource('setuptools').stage { system "#{bin}/python", *setup_args }
+    resource('pip').stage { system "#{bin}/python", *setup_args }
 
     # And now we write the distutils.cfg
     cfg = lib_cellar/"distutils/distutils.cfg"
@@ -243,7 +245,7 @@ class Stackless < Formula
                '     You should `unset PYTHONPATH` to fix this.')
       else:
           # Only do this for a brewed python:
-          opt_executable = '#{opt_bin}/python#{VER}-slp'
+          opt_executable = '#{opt_bin}/python#{VER}'
           if os.path.commonprefix([os.path.realpath(e) for e in [opt_executable, sys.executable]]).startswith('#{rack}'):
               # Remove /System site-packages, and the Cellar site-packages
               # which we moved to lib/pythonX.Y/site-packages. Further, remove
@@ -260,7 +262,7 @@ class Stackless < Formula
               # Assume Framework style build (default since months in brew)
               try:
                   from _sysconfigdata import build_time_vars
-                  build_time_vars['LINKFORSHARED'] = '-u _PyMac_Error #{opt_prefix}/Frameworks/Python.framework/Versions/#{VER}-slp/Python'
+                  build_time_vars['LINKFORSHARED'] = '-u _PyMac_Error #{opt_prefix}/Frameworks/#{FRAMEWORK}.framework/Versions/#{VER}/Python'
               except:
                   pass  # remember: don't print here. Better to fail silently.
 
@@ -270,24 +272,26 @@ class Stackless < Formula
           # Tell about homebrew's site-packages location.
           # This is needed for Python to parse *.pth.
           import site
-          site.addsitedir('#{site_packages}')
+          site.addsitedir('#{site_packages_cellar}')
     EOF
   end
 
   def caveats; <<-EOS.undent
     Setuptools and Pip have been installed. To update them
-      pip-slp install --upgrade setuptools
-      pip-slp install --upgrade pip
+      #{opt_bin}/pip install --upgrade setuptools
+      #{opt_bin}/pip install --upgrade pip
 
     You can install Python packages with
-      pip-slp install <package>
+      #{opt_bin}/pip install <package>
 
     They will install into the site-package directory
-      #{site_packages}
+      #{site_packages_cellar}
 
     See: https://github.com/Homebrew/homebrew/wiki/Homebrew-and-Python
     EOS
   end
+  
+  keg_only "avoid conflicts between CPython and Stackless"
 
   test do
     # Check if sqlite is ok, because we build with --enable-loadable-sqlite-extensions
