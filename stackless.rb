@@ -53,11 +53,6 @@ class Stackless < Formula
     lib_cellar/"site-packages"
   end
 
-  # The HOMEBREW_PREFIX location of site-packages.
-  # def site_packages
-  #   HOMEBREW_PREFIX/"lib/python#{VER}/site-packages"
-  # end
-
   def install
     opoo 'The given option --with-poll enables a somewhat broken poll() on OS X (http://bugs.python.org/issue5154).' if build.with? 'poll'
 
@@ -120,16 +115,6 @@ class Stackless < Formula
     # Demos and Tools
     system "make", "frameworkinstallextras", "PYTHONAPPSDIR=#{share}/python"
     system "make", "quicktest" if build.include? 'quicktest'
-
-    # Post-install, fix up the site-packages so that user-installed Python
-    # software survives minor updates, such as going from 2.7.0 to 2.7.1:
-
-    # Remove the site-packages that Python created in its Cellar.
-    # site_packages_cellar.rmtree
-    # Create a site-packages in HOMEBREW_PREFIX/lib/python#{VER}/site-packages
-    # site_packages.mkpath
-    # Symlink the prefix site-packages into the cellar.
-    # site_packages_cellar.parent.install_symlink site_packages
 
     # Write our sitecustomize.py
     rm_rf Dir["#{site_packages_cellar}/sitecustomize.py[co]"]
