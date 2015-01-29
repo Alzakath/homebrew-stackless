@@ -2,11 +2,11 @@ require 'formula'
 
 class Stackless < Formula
   VER='2.7'
-  FRAMEWORK='Stackless'
+  FRAMEWORK='Python'
   homepage 'http://www.stackless.com'
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '#{VER}-slp'
-  url 'http://www.stackless.com/binaries/stackless-275-export.tar.bz2'
-  sha1 '96010ff159a57363a64f81d0db491dbc4182383d'
+  url 'http://www.stackless.com/binaries/stackless-278-export.tar.bz2'
+  md5 '2880f05e599020eb8f2624ce3796592b'
 
   option :universal
   option 'quicktest', "Run `make quicktest` after the build (for devs; may fail)"
