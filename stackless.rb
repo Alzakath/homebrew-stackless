@@ -141,7 +141,7 @@ class Stackless < Formula
       verbose=1
       [install]
       force=1
-      prefix=#{opt_prefix}/Frameworks/#{FRAMEWORK}.framework/Versions/#{VER}/
+      prefix=#{opt_prefix}
     EOF
 
     # Fixes setting Python build flags for certain software
