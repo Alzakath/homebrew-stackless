@@ -92,7 +92,7 @@ class Stackless < Formula
     # `brew install enchant && pip install pyenchant`
     inreplace "./Lib/ctypes/macholib/dyld.py" do |f|
       f.gsub! 'DEFAULT_LIBRARY_FALLBACK = [', "DEFAULT_LIBRARY_FALLBACK = [ '#{HOMEBREW_PREFIX}/lib',"
-      f.gsub! 'DEFAULT_FRAMEWORK_FALLBACK = [', "DEFAULT_FRAMEWORK_FALLBACK = [ '#{HOMEBREW_PREFIX}/Frameworks',"
+      f.gsub! 'DEFAULT_FRAMEWORK_FALLBACK = [', "DEFAULT_FRAMEWORK_FALLBACK = [ '#{opt_prefix}/Frameworks',"
     end
 
     if build.with? 'brewed-tk'
@@ -141,7 +141,7 @@ class Stackless < Formula
       verbose=1
       [install]
       force=1
-      prefix=#{HOMEBREW_PREFIX}
+      prefix=#{opt_prefix}/Frameworks/#{FRAMEWORK}.framework/Versions/#{VER}/
     EOF
 
     # Fixes setting Python build flags for certain software
