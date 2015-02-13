@@ -4,9 +4,7 @@ class Stackless < Formula
   VER='2.7'
   FRAMEWORK='Python'
   homepage 'http://www.stackless.com'
-  url 'http://hg.python.org/stackless', :using => :hg, :tag => '2.7.9-slp'
-  version '2.7.9'
-
+  url 'http://hg.python.org/stackless', :using => :hg, :tag => '{VER}.9-slp'
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '#{VER}-slp'
 
   option :universal
