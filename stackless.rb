@@ -1,6 +1,7 @@
 require 'formula'
 
 class Stackless < Formula
+  version '2.7.9'
   VER='2.7'
   FRAMEWORK='Python'
   homepage 'http://www.stackless.com'
