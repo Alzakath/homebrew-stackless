@@ -4,8 +4,8 @@ class Stackless < Formula
   VER='2.7'
   FRAMEWORK='Python'
   homepage 'http://www.stackless.com'
-  url 'http://hg.python.org/stackless', :using => :hg, :tag => '"2.7.9-slp"'
-  head 'http://hg.python.org/stackless', :using => :hg, :branch => '#{VER}-slp'
+  url 'http://hg.python.org/stackless', :using => :hg, :tag => '"v2.7.9-slp"'
+  head 'http://hg.python.org/stackless', :using => :hg, :branch => '2.7-slp'
 
   option :universal
   option 'quicktest', "Run `make quicktest` after the build (for devs; may fail)"
