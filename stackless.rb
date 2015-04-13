@@ -5,7 +5,8 @@ class Stackless < Formula
   VER='2.7'
   FRAMEWORK='Python'
   homepage 'http://www.stackless.com'
-  url 'http://hg.python.org/stackless', :using => :hg, :tag => '"v2.7.9-slp"'
+  url 'http://www.stackless.com/binaries/stackless-279-export.tar.xz'
+  sha1 "d0291aef5a3ef3e7c9179f959f1828029089b531"
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '2.7-slp'
 
   option :universal
