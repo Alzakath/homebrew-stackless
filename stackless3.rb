@@ -7,13 +7,6 @@ class Stackless3 < Formula
   sha1 "535771e8a763db874e424851c59156720841e17a"
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '3.4-slp'
 
-  bottle do
-    revision 8
-    sha256 "17b51ee7ae14df6def7c1acb4ab0736c75dbaa4aa114017f3aaf5a8cf175ecd9" => :yosemite
-    sha256 "201741e84461918bd7f5116dc203b4927bef84307e33a0cdf1453c969352dcad" => :mavericks
-    sha256 "4a0b1897fd29f7aa2600b7810c8723ac3e10bdda82a10892744d36a945577c8d" => :mountain_lion
-  end
-
   option :universal
   option "with-brewed-tk", "Use Homebrew's Tk (has optional Cocoa and threads support)"
   option "with-quicktest", "Run `make quicktest` after the build"
