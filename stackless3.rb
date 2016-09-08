@@ -4,7 +4,7 @@ class Stackless3 < Formula
   version '3.4.2'
   homepage 'http://www.stackless.com'
   url 'http://www.stackless.com/binaries/stackless-342-export.tar.xz'
-  sha1 "535771e8a763db874e424851c59156720841e17a"
+  sha256 "dd6ae57cc8a162690a24f21ce1f0c4d96e096c24e17137783bacc9182b96b6dc"
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '3.4-slp'
 
   option :universal

@@ -6,7 +6,7 @@ class Stackless < Formula
   FRAMEWORK='Python'
   homepage 'http://www.stackless.com'
   url 'http://www.stackless.com/binaries/stackless-279-export.tar.xz'
-  sha1 "d0291aef5a3ef3e7c9179f959f1828029089b531"
+  sha256 "52775d16149050e96046738e94f9e7c460c4458cd27603b6978e526a6f2af38a"
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '2.7-slp'
 
   option :universal
@@ -276,7 +276,7 @@ class Stackless < Formula
     See: https://github.com/Homebrew/homebrew/wiki/Homebrew-and-Python
     EOS
   end
-  
+
   keg_only "avoid conflicts between CPython and Stackless"
 
   test do
