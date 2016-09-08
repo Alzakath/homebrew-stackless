@@ -27,19 +27,19 @@ class Stackless < Formula
   skip_clean 'bin/easy_install', 'bin/easy_install-#{VER}'
 
   resource 'setuptools' do
-    url 'https://pypi.python.org/packages/source/s/setuptools/setuptools-2.2.tar.gz'
-    sha1 '547eff11ea46613e8a9ba5b12a89c1010ecc4e51'
+    url 'https://pypi.python.org/packages/32/3c/e853a68b703f347f5ed86585c2dd2828a83252e1216c1201fa6f81270578/setuptools-26.1.1.tar.gz'
+    sha256 '475ce28993d7cb75335942525b9fac79f7431a7f6e8a0079c0f2680641379481'
   end
 
   resource 'pip' do
-    url 'https://pypi.python.org/packages/source/p/pip/pip-1.5.4.tar.gz'
-    sha1 '35ccb7430356186cf253615b70f8ee580610f734'
+    url 'https://pypi.python.org/packages/e7/a8/7556133689add8d1a54c0b14aeff0acb03c64707ce100ecd53934da1aa13/pip-8.1.2.tar.gz'
+    sha256 '4d24b03ffa67638a3fa931c09fd9e0273ffa904e95ebebe7d4b1a54c93d7b732'
   end
 
   # Backported security fix for CVE-2014-1912: http://bugs.python.org/issue20246
   patch :p0 do
     url "https://gist.githubusercontent.com/leepa/9351856/raw/7f9130077fd760fcf9a25f50b69d9c77b155fbc5/CVE-2014-1912.patch"
-    sha1 "db25abc381f62e9f501ad56aaa2537e48e1b0889"
+    sha256 "6a64d56f70ceab1b86f8420b5366496bfbcaf7909449b9339e4429d76b21455e"
   end
 
   # Patch to disable the search for Tk.framework, since Homebrew's Tk is
