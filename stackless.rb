@@ -64,11 +64,6 @@ class Stackless < Formula
     lib_cellar/"site-packages"
   end
 
-  # The HOMEBREW_PREFIX location of site-packages.
-  def site_packages
-    HOMEBREW_PREFIX/"stackless/lib/python2.7/site-packages"
-  end
-
   # setuptools remembers the build flags python is built with and uses them to
   # build packages later. Xcode-only systems need different flags.
   pour_bottle? do
@@ -199,7 +194,7 @@ class Stackless < Formula
     (lib/"pkgconfig").install_symlink Dir[frameworks/"Python.framework/Versions/Current/lib/pkgconfig/*"]
 
     # Remove the site-packages that Python created in its Cellar.
-    site_packages_cellar.rmtree
+    #site_packages_cellar.rmtree
 
     (libexec/"setuptools").install resource("setuptools")
     (libexec/"pip").install resource("pip")
@@ -217,41 +212,35 @@ class Stackless < Formula
     # Fix up the site-packages so that user-installed Python software survives
     # minor updates, such as going from 2.7.0 to 2.7.1:
 
-    # Create a site-packages in HOMEBREW_PREFIX/stackless/lib/python2.7/site-packages
-    site_packages.mkpath
+    # Create a site-packages in Cellar
+    site_packages_cellar.mkpath
 
     # Symlink the prefix site-packages into the cellar.
-    site_packages_cellar.unlink if site_packages_cellar.exist?
-    site_packages_cellar.parent.install_symlink site_packages
+    #site_packages_cellar.unlink if site_packages_cellar.exist?
+    #site_packages_cellar.parent.install_symlink site_packages
 
     # Write our sitecustomize.py
-    rm_rf Dir["#{site_packages}/sitecustomize.py[co]"]
-    (site_packages/"sitecustomize.py").atomic_write(sitecustomize)
+    rm_rf Dir["#{site_packages_cellar}/sitecustomize.py[co]"]
+    (site_packages_cellar/"sitecustomize.py").atomic_write(sitecustomize)
 
     # Remove old setuptools installations that may still fly around and be
     # listed in the easy_install.pth. This can break setuptools build with
     # zipimport.ZipImportError: bad local file header
     # setuptools-0.9.5-py3.3.egg
-    rm_rf Dir["#{site_packages}/setuptools*"]
-    rm_rf Dir["#{site_packages}/distribute*"]
-    rm_rf Dir["#{site_packages}/pip[-_.][0-9]*", "#{site_packages}/pip"]
+    rm_rf Dir["#{site_packages_cellar}/setuptools*"]
+    rm_rf Dir["#{site_packages_cellar}/distribute*"]
+    rm_rf Dir["#{site_packages_cellar}/pip[-_.][0-9]*", "#{site_packages_cellar}/pip"]
 
     setup_args = ["-s", "setup.py", "--no-user-cfg", "install", "--force",
                   "--verbose",
                   "--single-version-externally-managed",
                   "--record=installed.txt",
                   "--install-scripts=#{bin}",
-                  "--install-lib=#{site_packages}"]
+                  "--install-lib=#{site_packages_cellar}"]
 
     (libexec/"setuptools").cd { system "#{bin}/python", *setup_args }
     (libexec/"pip").cd { system "#{bin}/python", *setup_args }
     (libexec/"wheel").cd { system "#{bin}/python", *setup_args }
-
-    # When building from source, these symlinks will not exist, since
-    # post_install happens after linking.
-    %w[pip pip2 pip2.7 easy_install easy_install-2.7 wheel].each do |e|
-      (HOMEBREW_PREFIX/"stackless/bin").install_symlink bin/e
-    end
 
     # Help distutils find brewed stuff when building extensions
     include_dirs = [HOMEBREW_PREFIX/"include", Formula["openssl"].opt_include]
@@ -269,9 +258,6 @@ class Stackless < Formula
 
     cfg = lib_cellar/"distutils/distutils.cfg"
     cfg.atomic_write <<-EOF.undent
-      [install]
-      prefix=#{HOMEBREW_PREFIX}/stackless
-
       [build_ext]
       include_dirs=#{include_dirs.join ":"}
       library_dirs=#{library_dirs.join ":"}
@@ -308,15 +294,10 @@ class Stackless < Formula
           # .pth files have already been processed so don't use addsitedir
           sys.path.extend(library_packages)
 
-          # the Cellar site-packages is a symlink to the HOMEBREW_PREFIX
-          # site_packages; prefer the shorter paths
-          long_prefix = re.compile(r'#{rack}/[0-9\._abrc]+/Frameworks/Python\.framework/Versions/2\.7/lib/python2\.7/site-packages')
-          sys.path = [long_prefix.sub('#{site_packages}', p) for p in sys.path]
-
           # LINKFORSHARED (and python-config --ldflags) return the
           # full path to the lib (yes, "Python" is actually the lib, not a
           # dir) so that third-party software does not need to add the
-          # -F/#{HOMEBREW_PREFIX}/Frameworks switch.
+          # -F/#{opt_prefix}/Frameworks switch.
           try:
               from _sysconfigdata import build_time_vars
               build_time_vars['LINKFORSHARED'] = '-u _PyMac_Error #{opt_prefix}/Frameworks/Python.framework/Versions/2.7/Python'
@@ -336,11 +317,13 @@ class Stackless < Formula
       pip install <package>
 
     They will install into the site-package directory
-      #{site_packages}
+      #{site_packages_cellar}
 
     See: http://docs.brew.sh/Homebrew-and-Python.html
     EOS
   end
+
+  keg_only "avoid conflicts betweeb CPython and Stackless"
 
   test do
     # Check if sqlite is ok, because we build with --enable-loadable-sqlite-extensions
