@@ -218,30 +218,30 @@ class Stackless < Formula
     # minor updates, such as going from 2.7.0 to 2.7.1:
 
     # Create a site-packages in HOMEBREW_PREFIX/lib/python2.7/site-packages
-    #site_packages.mkpath
+    site_packages.mkpath
 
     # Symlink the prefix site-packages into the cellar.
-    #site_packages_cellar.unlink if site_packages_cellar.exist?
-    #site_packages_cellar.parent.install_symlink site_packages
+    site_packages_cellar.unlink if site_packages_cellar.exist?
+    site_packages_cellar.parent.install_symlink site_packages
 
     # Write our sitecustomize.py
-    rm_rf Dir["#{site_packages_cellar}/sitecustomize.py[co]"]
-    (site_packages_cellar/"sitecustomize.py").atomic_write(sitecustomize)
+    rm_rf Dir["#{site_packages}/sitecustomize.py[co]"]
+    (site_packages/"sitecustomize.py").atomic_write(sitecustomize)
 
     # Remove old setuptools installations that may still fly around and be
     # listed in the easy_install.pth. This can break setuptools build with
     # zipimport.ZipImportError: bad local file header
     # setuptools-0.9.5-py3.3.egg
-    rm_rf Dir["#{site_packages_cellar}/setuptools*"]
-    rm_rf Dir["#{site_packages_cellar}/distribute*"]
-    rm_rf Dir["#{site_packages_cellar}/pip[-_.][0-9]*", "#{site_packages_cellar}/pip"]
+    rm_rf Dir["#{site_packages}/setuptools*"]
+    rm_rf Dir["#{site_packages}/distribute*"]
+    rm_rf Dir["#{site_packages}/pip[-_.][0-9]*", "#{site_packages}/pip"]
 
     setup_args = ["-s", "setup.py", "--no-user-cfg", "install", "--force",
                   "--verbose",
                   "--single-version-externally-managed",
                   "--record=installed.txt",
                   "--install-scripts=#{bin}",
-                  "--install-lib=#{site_packages_cellar}"]
+                  "--install-lib=#{site_packages}"]
 
     (libexec/"setuptools").cd { system "#{bin}/python", *setup_args }
     (libexec/"pip").cd { system "#{bin}/python", *setup_args }
@@ -249,9 +249,9 @@ class Stackless < Formula
 
     # When building from source, these symlinks will not exist, since
     # post_install happens after linking.
-    # %w[pip pip2 pip2.7 easy_install easy_install-2.7 wheel].each do |e|
-    #   (HOMEBREW_PREFIX/"bin").install_symlink bin/e
-    # end
+    %w[pip pip2 pip2.7 easy_install easy_install-2.7 wheel].each do |e|
+      (HOMEBREW_PREFIX/"bin").install_symlink bin/e
+    end
 
     # Help distutils find brewed stuff when building extensions
     include_dirs = [HOMEBREW_PREFIX/"include", Formula["openssl"].opt_include]
@@ -269,6 +269,9 @@ class Stackless < Formula
 
     cfg = lib_cellar/"distutils/distutils.cfg"
     cfg.atomic_write <<-EOF.undent
+      [install]
+      prefix=#{HOMEBREW_PREFIX}
+
       [build_ext]
       include_dirs=#{include_dirs.join ":"}
       library_dirs=#{library_dirs.join ":"}
@@ -308,7 +311,7 @@ class Stackless < Formula
           # the Cellar site-packages is a symlink to the HOMEBREW_PREFIX
           # site_packages; prefer the shorter paths
           long_prefix = re.compile(r'#{rack}/[0-9\._abrc]+/Frameworks/Python\.framework/Versions/2\.7/lib/python2\.7/site-packages')
-          sys.path = [long_prefix.sub('#{site_packages_cellar}', p) for p in sys.path]
+          sys.path = [long_prefix.sub('#{site_packages}', p) for p in sys.path]
 
           # LINKFORSHARED (and python-config --ldflags) return the
           # full path to the lib (yes, "Python" is actually the lib, not a
@@ -333,7 +336,7 @@ class Stackless < Formula
       pip install <package>
 
     They will install into the site-package directory
-      #{site_packages_cellar}
+      #{site_packages}
 
     See: http://docs.brew.sh/Homebrew-and-Python.html
     EOS
