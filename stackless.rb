@@ -66,7 +66,7 @@ class Stackless < Formula
 
   # The HOMEBREW_PREFIX location of site-packages.
   def site_packages
-    HOMEBREW_PREFIX/"lib/python2.7/site-packages"
+    HOMEBREW_PREFIX/"stackless/lib/python2.7/site-packages"
   end
 
   # setuptools remembers the build flags python is built with and uses them to
@@ -217,7 +217,7 @@ class Stackless < Formula
     # Fix up the site-packages so that user-installed Python software survives
     # minor updates, such as going from 2.7.0 to 2.7.1:
 
-    # Create a site-packages in HOMEBREW_PREFIX/lib/python2.7/site-packages
+    # Create a site-packages in HOMEBREW_PREFIX/stackless/lib/python2.7/site-packages
     site_packages.mkpath
 
     # Symlink the prefix site-packages into the cellar.
@@ -250,7 +250,7 @@ class Stackless < Formula
     # When building from source, these symlinks will not exist, since
     # post_install happens after linking.
     %w[pip pip2 pip2.7 easy_install easy_install-2.7 wheel].each do |e|
-      (HOMEBREW_PREFIX/"bin").install_symlink bin/e
+      (HOMEBREW_PREFIX/"stackless/bin").install_symlink bin/e
     end
 
     # Help distutils find brewed stuff when building extensions
@@ -270,7 +270,7 @@ class Stackless < Formula
     cfg = lib_cellar/"distutils/distutils.cfg"
     cfg.atomic_write <<-EOF.undent
       [install]
-      prefix=#{HOMEBREW_PREFIX}
+      prefix=#{HOMEBREW_PREFIX}/stackless
 
       [build_ext]
       include_dirs=#{include_dirs.join ":"}
@@ -341,8 +341,6 @@ class Stackless < Formula
     See: http://docs.brew.sh/Homebrew-and-Python.html
     EOS
   end
-
-  keg_only "avoid conflicts between CPython and Stackless"
 
   test do
     # Check if sqlite is ok, because we build with --enable-loadable-sqlite-extensions
