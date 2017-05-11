@@ -31,6 +31,8 @@ class Stackless < Formula
 
   skip_clean "bin/pip", "bin/pip-2.7"
   skip_clean "bin/easy_install", "bin/easy_install-2.7"
+  skip_clean "bin/virtualenv"
+  skip_clean "bin/virtualenv-clone", "bin/virtualenvwrapper.sh", "bin/virtualenvwrapper_lazy.sh"
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/26/d1/dc7fe14ce4a3ff3faebf1ac11350de4104ea2d2a80c98393b55c84362b0c/setuptools-32.1.0.tar.gz"
@@ -45,6 +47,16 @@ class Stackless < Formula
   resource "wheel" do
     url "https://files.pythonhosted.org/packages/c9/1d/bd19e691fd4cfe908c76c429fe6e4436c9e83583c4414b54f6c85471954a/wheel-0.29.0.tar.gz"
     sha256 "1ebb8ad7e26b448e9caa4773d2357849bf80ff9e313964bcaf79cbf0201a1648"
+  end
+
+  resource "virtualenv" do
+    url "https://files.pythonhosted.org/packages/d4/0c/9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/virtualenv-15.1.0.tar.gz"
+    sha256 "02f8102c2436bb03b3ee6dede1919d1dac8a427541652e5ec95171ec8adbc93a"
+  end
+
+  resource "virtualenvwrapper" do
+    url "https://files.pythonhosted.org/packages/3e/85/17113f6d1d15739f811f6836ee4c8cb120fa3bc46d248853753f519ae7b0/virtualenvwrapper-4.7.2.tar.gz"
+    sha256 "63cffd24148c969245cceff561b18ba0b5b2b48dcb059e71425adad2d4ffe349"
   end
 
   # Patch to disable the search for Tk.framework, since Homebrew's Tk is
@@ -199,6 +211,8 @@ class Stackless < Formula
     (libexec/"setuptools").install resource("setuptools")
     (libexec/"pip").install resource("pip")
     (libexec/"wheel").install resource("wheel")
+    (libexec/"virtualenv").install resource("virtualenv")
+    (libexec/"virtualenvwrapper").install resource("virtualenvwrapper")
 
     if MacOS.version > :snow_leopard && build.with?("sphinx-doc")
       cd "Doc" do
@@ -230,6 +244,8 @@ class Stackless < Formula
     rm_rf Dir["#{site_packages_cellar}/setuptools*"]
     rm_rf Dir["#{site_packages_cellar}/distribute*"]
     rm_rf Dir["#{site_packages_cellar}/pip[-_.][0-9]*", "#{site_packages_cellar}/pip"]
+    rm_rf Dir["#{site_packages_cellar}/virtualenv*"]
+    rm_rf Dir["#{site_packages_cellar}/virtualenvwrapper*"]
 
     setup_args = ["-s", "setup.py", "--no-user-cfg", "install", "--force",
                   "--verbose",
@@ -241,6 +257,8 @@ class Stackless < Formula
     (libexec/"setuptools").cd { system "#{bin}/python", *setup_args }
     (libexec/"pip").cd { system "#{bin}/python", *setup_args }
     (libexec/"wheel").cd { system "#{bin}/python", *setup_args }
+    (libexec/"virtualenv").cd { system "#{bin}/python", *setup_args }
+    (libexec/"virtualenvwrapper").cd { system "#{bin}/python", *setup_args }
 
     # Help distutils find brewed stuff when building extensions
     include_dirs = [HOMEBREW_PREFIX/"include", Formula["openssl"].opt_include]
