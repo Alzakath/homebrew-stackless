@@ -1,14 +1,13 @@
 require 'formula'
 
 class Stackless3 < Formula
-  version '3.4.2'
-  homepage 'http://www.stackless.com'
-  url 'http://www.stackless.com/binaries/stackless-342-export.tar.xz'
+  desc "Interpreted, interactive, object-oriented programming language"
+  homepage "http://www.stackless.com"
+  url 'http://www.stackless.com/binaries/stackless-343-export.tar.xz'
   sha256 "dd6ae57cc8a162690a24f21ce1f0c4d96e096c24e17137783bacc9182b96b6dc"
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '3.4-slp'
 
   option :universal
-  option "with-brewed-tk", "Use Homebrew's Tk (has optional Cocoa and threads support)"
   option "with-quicktest", "Run `make quicktest` after the build"
 
   deprecated_option "quicktest" => "with-quicktest"
@@ -19,26 +18,36 @@ class Stackless3 < Formula
   depends_on "gdbm" => :recommended
   depends_on "openssl"
   depends_on "xz" => :recommended  # for the lzma module added in 3.3
-  depends_on "homebrew/dupes/tcl-tk" if build.with? "brewed-tk"
-  depends_on :x11 if build.with? "brewed-tk" and Tab.for_name("tcl-tk").with? "x11"
 
-  skip_clean "bin/pip3", "bin/pip-3.4", "bin/pip-3.5"
-  skip_clean "bin/easy_install3", "bin/easy_install-3.4", "bin/easy_install-3.5"
+  skip_clean "bin/pip3", "bin/pip-3.4"
+  skip_clean "bin/easy_install3", "bin/easy_install-3.4"
+  skip_clean "bin/virtualenv"
+  skip_clean "bin/virtualenv-clone", "bin/virtualenvwrapper.sh", "bin/virtualenvwrapper_lazy.sh"
 
   resource "setuptools" do
-    url "https://pypi.python.org/packages/32/3c/e853a68b703f347f5ed86585c2dd2828a83252e1216c1201fa6f81270578/setuptools-26.1.1.tar.gz"
-    sha256 "475ce28993d7cb75335942525b9fac79f7431a7f6e8a0079c0f2680641379481"
+      url "https://files.pythonhosted.org/packages/26/d1/dc7fe14ce4a3ff3faebf1ac11350de4104ea2d2a80c98393b55c84362b0c/setuptools-32.1.0.tar.gz"
+      sha256 "86d57bf86edc0ecfd2dc0907ed3710bc4501fb13a06c0fcaf7632305b00ce832"
   end
 
   resource "pip" do
-    url "https://pypi.python.org/packages/e7/a8/7556133689add8d1a54c0b14aeff0acb03c64707ce100ecd53934da1aa13/pip-8.1.2.tar.gz"
-    sha256 "4d24b03ffa67638a3fa931c09fd9e0273ffa904e95ebebe7d4b1a54c93d7b732"
+      url "https://files.pythonhosted.org/packages/11/b6/abcb525026a4be042b486df43905d6893fb04f05aac21c32c638e939e447/pip-9.0.1.tar.gz"
+      sha256 "09f243e1a7b461f654c26a725fa373211bb7ff17a9300058b205c61658ca940d"
   end
 
-  # Homebrew's tcl-tk is built in a standard unix fashion (due to link errors)
-  # so we have to stop python from searching for frameworks and linking against
-  # X11.
-  patch :DATA if build.with? "brewed-tk"
+  resource "wheel" do
+    url "https://files.pythonhosted.org/packages/c9/1d/bd19e691fd4cfe908c76c429fe6e4436c9e83583c4414b54f6c85471954a/wheel-0.29.0.tar.gz"
+    sha256 "1ebb8ad7e26b448e9caa4773d2357849bf80ff9e313964bcaf79cbf0201a1648"
+  end
+
+  resource "virtualenv" do
+    url "https://files.pythonhosted.org/packages/d4/0c/9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/virtualenv-15.1.0.tar.gz"
+    sha256 "02f8102c2436bb03b3ee6dede1919d1dac8a427541652e5ec95171ec8adbc93a"
+  end
+
+  resource "virtualenvwrapper" do
+    url "https://files.pythonhosted.org/packages/3e/85/17113f6d1d15739f811f6836ee4c8cb120fa3bc46d248853753f519ae7b0/virtualenvwrapper-4.7.2.tar.gz"
+    sha256 "63cffd24148c969245cceff561b18ba0b5b2b48dcb059e71425adad2d4ffe349"
+  end
 
   def lib_cellar
     prefix/"Frameworks/Python.framework/Versions/#{xy}/lib/python#{xy}"
@@ -106,12 +115,6 @@ class Stackless3 < Formula
       f.gsub! "DEFAULT_FRAMEWORK_FALLBACK = [", "DEFAULT_FRAMEWORK_FALLBACK = [ '#{HOMEBREW_PREFIX}/Frameworks',"
     end
 
-    if build.with? "brewed-tk"
-      tcl_tk = Formula["tcl-tk"].opt_prefix
-      ENV.append "CPPFLAGS", "-I#{tcl_tk}/include"
-      ENV.append "LDFLAGS", "-L#{tcl_tk}/lib"
-    end
-
     system "./configure", *args
 
     system "make"
@@ -162,30 +165,31 @@ class Stackless3 < Formula
     site_packages_cellar.parent.install_symlink site_packages
 
     # Write our sitecustomize.py
-    rm_rf Dir["#{site_packages}/sitecustomize.py[co]"]
-    (site_packages/"sitecustomize.py").atomic_write(sitecustomize)
+    rm_rf Dir["#{site_packages_cellar}/sitecustomize.py[co]"]
+    (site_packages_cellar/"sitecustomize.py").atomic_write(sitecustomize)
 
     # Remove old setuptools installations that may still fly around and be
     # listed in the easy_install.pth. This can break setuptools build with
     # zipimport.ZipImportError: bad local file header
     # setuptools-0.9.8-py3.3.egg
-    rm_rf Dir["#{site_packages}/setuptools*"]
-    rm_rf Dir["#{site_packages}/distribute*"]
+    rm_rf Dir["#{site_packages_cellar}/setuptools*"]
+    rm_rf Dir["#{site_packages_cellar}/distribute*"]
+    rm_rf Dir["#{site_packages_cellar}/pip[-_.][0-9]*", "#{site_packages_cellar}/pip"]
+    rm_rf Dir["#{site_packages_cellar}/virtualenv*"]
+    rm_rf Dir["#{site_packages_cellar}/virtualenvwrapper*"]
 
-    %w[setuptools pip].each do |pkg|
-      (libexec/pkg).cd do
-        system bin/"python3", "-s", "setup.py", "--no-user-cfg", "install",
-               "--force", "--verbose", "--install-scripts=#{bin}",
-               "--install-lib=#{site_packages}"
-      end
-    end
+    setup_args = ["-s", "setup.py", "--no-user-cfg", "install", "--force",
+                  "--verbose",
+                  "--single-version-externally-managed",
+                  "--record=installed.txt",
+                  "--install-scripts=#{bin}",
+                  "--install-lib=#{site_packages_cellar}"]
 
-    rm_rf [bin/"pip", bin/"easy_install"]
-
-    # post_install happens after link
-    %W[pip3 pip#{xy} easy_install-#{xy}].each do |e|
-      (HOMEBREW_PREFIX/"bin").install_symlink bin/e
-    end
+    (libexec/"setuptools").cd { system "#{bin}/python3", *setup_args }
+    (libexec/"pip").cd { system "#{bin}/python3", *setup_args }
+    (libexec/"wheel").cd { system "#{bin}/python3", *setup_args }
+    (libexec/"virtualenv").cd { system "#{bin}/python3", *setup_args }
+    (libexec/"virtualenvwrapper").cd { system "#{bin}/python3", *setup_args }
 
     # And now we write the distutils.cfg
     cfg = lib_cellar/"distutils/distutils.cfg"
@@ -198,7 +202,7 @@ class Stackless3 < Formula
   end
 
   def xy
-    version.to_s.slice(/(3.\d)/) || "3.5"
+    version.to_s.slice(/(3.\d)/) || "3.4"
   end
 
   def distutils_fix_superenv(args)
@@ -212,9 +216,6 @@ class Stackless3 < Formula
       cflags += " -isysroot #{MacOS.sdk_path}"
       ldflags += " -isysroot #{MacOS.sdk_path}"
       args << "CPPFLAGS=-I#{MacOS.sdk_path}/usr/include" # find zlib
-      if build.without? "brewed-tk"
-        cflags += " -I#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"
-      end
     end
     args << cflags
     args << ldflags
@@ -258,7 +259,7 @@ class Stackless3 < Formula
           # the Cellar site-packages is a symlink to the HOMEBREW_PREFIX
           # site_packages; prefer the shorter paths
           long_prefix = re.compile(r'#{rack}/[0-9\._abrc]+/Frameworks/Python\.framework/Versions/#{xy}/lib/python#{xy}/site-packages')
-          sys.path = [long_prefix.sub('#{site_packages}', p) for p in sys.path]
+          sys.path = [long_prefix.sub('#{site_packages_cellar}', p) for p in sys.path]
 
           # Set the sys.executable to use the opt_prefix
           sys.executable = '#{opt_bin}/python#{xy}'
@@ -274,19 +275,11 @@ class Stackless3 < Formula
         pip3 install <package>
 
       They will install into the site-package directory
-        #{site_packages}
+        #{site_packages_cellar}
 
       See: https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Homebrew-and-Python.md
     EOS
 
-    # Tk warning only for 10.6
-    tk_caveats = <<-EOS.undent
-
-      Apple's Tcl/Tk is not recommended for use with Python on Mac OS X 10.6.
-      For more information see: http://www.python.org/download/mac/tcltk/
-    EOS
-
-    text += tk_caveats unless MacOS.version >= :lion
     return text
   end
 
@@ -297,7 +290,6 @@ class Stackless3 < Formula
     # and it can occur that building sqlite silently fails if OSX's sqlite is used.
     system "#{bin}/python#{xy}", "-c", "import sqlite3"
     # Check if some other modules import. Then the linked libs are working.
-    system "#{bin}/python#{xy}", "-c", "import tkinter; root = tkinter.Tk()"
     system bin/"pip3", "list"
   end
 end
