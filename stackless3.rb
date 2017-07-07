@@ -50,7 +50,7 @@ class Stackless3 < Formula
   end
 
   def lib_cellar
-    prefix/"Frameworks/Python.framework/Versions/#{xy}/lib/python#{xy}"
+    prefix/"Frameworks/Python.framework/Versions/3.4/lib/python#{xy}"
   end
 
   def site_packages_cellar
