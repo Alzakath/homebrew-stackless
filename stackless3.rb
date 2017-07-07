@@ -50,7 +50,7 @@ class Stackless3 < Formula
   end
 
   def lib_cellar
-    prefix/"Frameworks/Python.framework/Versions/3.4/lib/python#{xy}"
+    prefix/"Frameworks/Python.framework/Versions/3.4/lib/python3.4"
   end
 
   def site_packages_cellar
@@ -143,9 +143,9 @@ class Stackless3 < Formula
 
     # These makevars are available through distutils.sysconfig at runtime and
     # some third-party software packages depend on them
-    inreplace frameworks/"Python.framework/Versions/#{xy}/lib/python#{xy}/config-#{xy}m/Makefile" do |s|
+    inreplace frameworks/"Python.framework/Versions/3.4/lib/python3.4/config-#{xy}m/Makefile" do |s|
       s.change_make_var! "LINKFORSHARED",
-                         "-u _PyMac_Error #{opt_prefix}/Frameworks/Python.framework/Versions/#{xy}/Python"
+                         "-u _PyMac_Error #{opt_prefix}/Frameworks/Python.framework/Versions/3.4/Python"
     end
 
     %w[setuptools pip].each do |r|
@@ -258,7 +258,7 @@ class Stackless3 < Formula
 
           # the Cellar site-packages is a symlink to the HOMEBREW_PREFIX
           # site_packages; prefer the shorter paths
-          long_prefix = re.compile(r'#{rack}/[0-9\._abrc]+/Frameworks/Python\.framework/Versions/#{xy}/lib/python#{xy}/site-packages')
+          long_prefix = re.compile(r'#{rack}/[0-9\._abrc]+/Frameworks/Python\.framework/Versions/3.4/lib/python3.4/site-packages')
           sys.path = [long_prefix.sub('#{site_packages_cellar}', p) for p in sys.path]
 
           # Set the sys.executable to use the opt_prefix
