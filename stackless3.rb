@@ -4,7 +4,7 @@ class Stackless3 < Formula
   desc "Interpreted, interactive, object-oriented programming language"
   homepage "http://www.stackless.com"
   url 'http://www.stackless.com/binaries/stackless-343-export.tar.xz'
-  sha256 "dd6ae57cc8a162690a24f21ce1f0c4d96e096c24e17137783bacc9182b96b6dc"
+  sha256 "f00984057260f62dd8693b640b0db2ecb3f7440791793b349e2bac484330e289"
   head 'http://hg.python.org/stackless', :using => :hg, :branch => '3.4-slp'
 
   option :universal
