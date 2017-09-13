@@ -4,7 +4,7 @@ class Stackless3 < Formula
   desc "Interpreted, interactive, object-oriented programming language"
   homepage "http://www.stackless.com"
   url 'https://github.com/stackless-dev/stackless/archive/v3.5.4-slp.tar.gz'
-  sha256 "f00984057260f62dd8693b640b0db2ecb3f7440791793b349e2bac484330e289"
+  sha256 "18a59ecbffd584c6ecf9b804432263a77b378fa27018e404ae18c7300e5b1a2c"
   head 'https://github.com/stackless-dev/stackless', :using => :git, :branch => '3.5-slp'
 
   option :universal
