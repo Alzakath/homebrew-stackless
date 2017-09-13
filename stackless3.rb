@@ -308,6 +308,8 @@ class Stackless3 < Formula
     text
   end
 
+  keg_only "avoid conflicts betweeb CPython and Stackless"
+
   test do
     xy = (prefix/"Frameworks/Python.framework/Versions").children.first.basename.to_s
     # Check if sqlite is ok, because we build with --enable-loadable-sqlite-extensions
