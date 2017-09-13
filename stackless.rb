@@ -1,9 +1,9 @@
 class Stackless < Formula
   desc "Interpreted, interactive, object-oriented programming language"
   homepage "http://www.stackless.com"
-  url "http://www.stackless.com/binaries/stackless-2713-export.tar.xz"
-  sha256 "43abe81d41cfa46012a0f5ab4af49b2575b1e4986e8ce6880396436256ecaa94"
-  head 'http://hg.python.org/stackless', :using => :hg, :branch => '2.7-slp'
+  url "https://github.com/stackless-dev/stackless/archive/v2.7.13-slp.tar.gz"
+  sha256 "00695a46e9ea65800211ef8c1128996a84eb6bc9c855116e28e5c2a398388f4d"
+  head 'https://github.com/stackless-dev/stackless', :using => :git, :branch => '2.7-slp'
 
   # Please don't add a wide/ucs4 option as it won't be accepted.
   # More details in: https://github.com/Homebrew/homebrew/pull/32368
