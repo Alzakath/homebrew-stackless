@@ -67,7 +67,7 @@ class Stackless < Formula
   # setuptools remembers the build flags python is built with and uses them to
   # build packages later. Xcode-only systems need different flags.
   pour_bottle? do
-    reason <<-EOS.undent
+    reason <<~EOS
     The bottle needs the Apple Command Line Tools to be installed.
       You can install them, if desired, with:
         xcode-select --install
@@ -300,7 +300,7 @@ class Stackless < Formula
     EOF
   end
 
-  def caveats; <<-EOS.undent
+  def caveats; <<~EOS
     Pip and setuptools have been installed. To update them
       pip install --upgrade pip setuptools
 

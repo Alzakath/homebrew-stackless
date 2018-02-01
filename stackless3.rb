@@ -57,7 +57,7 @@ class Stackless3 < Formula
   # setuptools remembers the build flags python is built with and uses them to
   # build packages later. Xcode-only systems need different flags.
   pour_bottle? do
-    reason <<-EOS.undent
+    reason <<~EOS
     The bottle needs the Apple Command Line Tools to be installed.
       You can install them, if desired, with:
         xcode-select --install
@@ -295,7 +295,7 @@ class Stackless3 < Formula
     else
       xy = version.to_s.slice(/(3\.\d)/) || "3.5"
     end
-    text = <<-EOS.undent
+    text = <<~EOS
       Pip, setuptools, and wheel have been installed. To update them
         pip3 install --upgrade pip setuptools wheel
       You can install Python packages with
