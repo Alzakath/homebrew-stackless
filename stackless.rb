@@ -56,6 +56,11 @@ class Stackless < Formula
     sha256 "18d8e4c500c4c4ee794f704e050cf2bbb492537532a4521d1047e7dd1ee4e374"
   end
 
+  resource "pbr" do
+      url "https://files.pythonhosted.org/packages/cd/9f/8f14a51b522c47a315dd969fbdf39233e41f0bfa8b996b4ff0ad852ff43d/pbr-4.0.4.tar.gz"
+      sha256 "a9c27eb8f0e24e786e544b2dbaedb729c9d8546342b5a6818d8eda098ad4340d"
+  end
+
   def lib_cellar
     prefix/"Frameworks/Python.framework/Versions/2.7/lib/python2.7"
   end
@@ -190,6 +195,7 @@ class Stackless < Formula
     (libexec/"pip").install resource("pip")
     (libexec/"wheel").install resource("wheel")
     (libexec/"virtualenv").install resource("virtualenv")
+    (libexec/"pbr").install resource("pbr")
     (libexec/"virtualenvwrapper").install resource("virtualenvwrapper")
 
     if MacOS.version > :snow_leopard && build.with?("sphinx-doc")
