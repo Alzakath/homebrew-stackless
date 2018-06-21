@@ -1,8 +1,8 @@
 class Stackless < Formula
   desc "Interpreted, interactive, object-oriented programming language"
   homepage "http://www.stackless.com"
-  url "https://github.com/stackless-dev/stackless/archive/v2.7.13-slp.tar.gz"
-  sha256 "00695a46e9ea65800211ef8c1128996a84eb6bc9c855116e28e5c2a398388f4d"
+  url "http://www.stackless.com/binaries/stackless-2714-export.tar.xz"
+  sha256 "71cb5a17b1caa4c0220ccc1c0651ab97295941e2f15a50d70ff717b7e2ae9d05"
   head 'https://github.com/stackless-dev/stackless', :using => :git, :branch => '2.7-slp'
 
   # Please don't add a wide/ucs4 option as it won't be accepted.
@@ -32,28 +32,28 @@ class Stackless < Formula
   skip_clean "bin/virtualenv-clone", "bin/virtualenvwrapper.sh", "bin/virtualenvwrapper_lazy.sh"
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/26/d1/dc7fe14ce4a3ff3faebf1ac11350de4104ea2d2a80c98393b55c84362b0c/setuptools-32.1.0.tar.gz"
-    sha256 "86d57bf86edc0ecfd2dc0907ed3710bc4501fb13a06c0fcaf7632305b00ce832"
+    url "https://files.pythonhosted.org/packages/1a/04/d6f1159feaccdfc508517dba1929eb93a2854de729fa68da9d5c6b48fa00/setuptools-39.2.0.zip"
+    sha256 "f7cddbb5f5c640311eb00eab6e849f7701fa70bf6a183fc8a2c33dd1d1672fb2"
   end
 
   resource "pip" do
-    url "https://files.pythonhosted.org/packages/11/b6/abcb525026a4be042b486df43905d6893fb04f05aac21c32c638e939e447/pip-9.0.1.tar.gz"
-    sha256 "09f243e1a7b461f654c26a725fa373211bb7ff17a9300058b205c61658ca940d"
+    url "https://files.pythonhosted.org/packages/ae/e8/2340d46ecadb1692a1e455f13f75e596d4eab3d11a57446f08259dee8f02/pip-10.0.1.tar.gz"
+    sha256 "f2bd08e0cd1b06e10218feaf6fef299f473ba706582eb3bd9d52203fdbd7ee68"
   end
 
   resource "wheel" do
-    url "https://files.pythonhosted.org/packages/c9/1d/bd19e691fd4cfe908c76c429fe6e4436c9e83583c4414b54f6c85471954a/wheel-0.29.0.tar.gz"
-    sha256 "1ebb8ad7e26b448e9caa4773d2357849bf80ff9e313964bcaf79cbf0201a1648"
+    url "https://files.pythonhosted.org/packages/2a/fb/aefe5d5dbc3f4fe1e815bcdb05cbaab19744d201bbc9b59cfa06ec7fc789/wheel-0.31.1.tar.gz"
+    sha256 "0a2e54558a0628f2145d2fc822137e322412115173e8a2ddbe1c9024338ae83c"
   end
 
   resource "virtualenv" do
-    url "https://files.pythonhosted.org/packages/d4/0c/9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/virtualenv-15.1.0.tar.gz"
-    sha256 "02f8102c2436bb03b3ee6dede1919d1dac8a427541652e5ec95171ec8adbc93a"
+    url "https://files.pythonhosted.org/packages/33/bc/fa0b5347139cd9564f0d44ebd2b147ac97c36b2403943dbee8a25fd74012/virtualenv-16.0.0.tar.gz"
+    sha256 "ca07b4c0b54e14a91af9f34d0919790b016923d157afda5efdde55c96718f752"
   end
 
   resource "virtualenvwrapper" do
-    url "https://files.pythonhosted.org/packages/3e/85/17113f6d1d15739f811f6836ee4c8cb120fa3bc46d248853753f519ae7b0/virtualenvwrapper-4.7.2.tar.gz"
-    sha256 "63cffd24148c969245cceff561b18ba0b5b2b48dcb059e71425adad2d4ffe349"
+    url "https://files.pythonhosted.org/packages/dc/bf/5ea6941c9511bb0ae842e673e6ac2dc6811b9078ae14ac04ccf050ab6cc6/virtualenvwrapper-4.8.2.tar.gz"
+    sha256 "18d8e4c500c4c4ee794f704e050cf2bbb492537532a4521d1047e7dd1ee4e374"
   end
 
   def lib_cellar
