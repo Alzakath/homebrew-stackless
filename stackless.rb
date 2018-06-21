@@ -229,6 +229,7 @@ class Stackless < Formula
     rm_rf Dir["#{site_packages_cellar}/distribute*"]
     rm_rf Dir["#{site_packages_cellar}/pip[-_.][0-9]*", "#{site_packages_cellar}/pip"]
     rm_rf Dir["#{site_packages_cellar}/virtualenv*"]
+    rm_rf Dir["#{site_packages_cellar}/pbr*"]
     rm_rf Dir["#{site_packages_cellar}/virtualenvwrapper*"]
 
     setup_args = ["-s", "setup.py", "--no-user-cfg", "install", "--force",
@@ -242,6 +243,7 @@ class Stackless < Formula
     (libexec/"pip").cd { system "#{bin}/python2", *setup_args }
     (libexec/"wheel").cd { system "#{bin}/python2", *setup_args }
     (libexec/"virtualenv").cd { system "#{bin}/python2", *setup_args }
+    (libexec/"pbr").cd { system "#{bin}/python2", *setup_args }
     (libexec/"virtualenvwrapper").cd { system "#{bin}/python2", *setup_args }
 
     # Help distutils find brewed stuff when building extensions
