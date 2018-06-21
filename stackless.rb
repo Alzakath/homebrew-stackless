@@ -248,7 +248,7 @@ class Stackless < Formula
     end
 
     cfg = lib_cellar/"distutils/distutils.cfg"
-    cfg.atomic_write <<-EOF.undent
+    cfg.atomic_write <<-EOF
       [build_ext]
       include_dirs=#{include_dirs.join ":"}
       library_dirs=#{library_dirs.join ":"}
@@ -256,7 +256,7 @@ class Stackless < Formula
   end
 
   def sitecustomize
-    <<-EOF.undent
+    <<-EOF
       # This file is created by Homebrew and is executed on each python startup.
       # Don't print from here, or else python command line scripts may fail!
       # <http://docs.brew.sh/Homebrew-and-Python.html>
