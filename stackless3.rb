@@ -1,73 +1,47 @@
-require 'formula'
-
 class Stackless3 < Formula
   desc "Interpreted, interactive, object-oriented programming language"
   homepage "http://www.stackless.com"
-  url 'https://github.com/stackless-dev/stackless/archive/v3.5.4-slp.tar.gz'
-  sha256 "18a59ecbffd584c6ecf9b804432263a77b378fa27018e404ae18c7300e5b1a2c"
-  head 'https://github.com/stackless-dev/stackless', :using => :git, :branch => '3.5-slp'
-
-  option :universal
-  option "with-quicktest", "Run `make quicktest` after the build"
-
-  deprecated_option "quicktest" => "with-quicktest"
-
-  depends_on "pkg-config" => :build
-  depends_on "readline" => :recommended
-  depends_on "sqlite" => :recommended
-  depends_on "gdbm" => :recommended
-  depends_on "openssl"
-  depends_on "xz" => :recommended  # for the lzma module added in 3.3
-
-  skip_clean "bin/pip3", "bin/pip-3.5"
-  skip_clean "bin/easy_install3", "bin/easy_install-3.5"
-  skip_clean "bin/virtualenv"
-  skip_clean "bin/virtualenv-clone", "bin/virtualenvwrapper.sh", "bin/virtualenvwrapper_lazy.sh"
-
-  resource "setuptools" do
-      url "https://files.pythonhosted.org/packages/26/d1/dc7fe14ce4a3ff3faebf1ac11350de4104ea2d2a80c98393b55c84362b0c/setuptools-32.1.0.tar.gz"
-      sha256 "86d57bf86edc0ecfd2dc0907ed3710bc4501fb13a06c0fcaf7632305b00ce832"
-  end
-
-  resource "pip" do
-      url "https://files.pythonhosted.org/packages/11/b6/abcb525026a4be042b486df43905d6893fb04f05aac21c32c638e939e447/pip-9.0.1.tar.gz"
-      sha256 "09f243e1a7b461f654c26a725fa373211bb7ff17a9300058b205c61658ca940d"
-  end
-
-  resource "wheel" do
-    url "https://files.pythonhosted.org/packages/c9/1d/bd19e691fd4cfe908c76c429fe6e4436c9e83583c4414b54f6c85471954a/wheel-0.29.0.tar.gz"
-    sha256 "1ebb8ad7e26b448e9caa4773d2357849bf80ff9e313964bcaf79cbf0201a1648"
-  end
-
-  resource "virtualenv" do
-    url "https://files.pythonhosted.org/packages/d4/0c/9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/virtualenv-15.1.0.tar.gz"
-    sha256 "02f8102c2436bb03b3ee6dede1919d1dac8a427541652e5ec95171ec8adbc93a"
-  end
-
-  resource "virtualenvwrapper" do
-    url "https://files.pythonhosted.org/packages/3e/85/17113f6d1d15739f811f6836ee4c8cb120fa3bc46d248853753f519ae7b0/virtualenvwrapper-4.7.2.tar.gz"
-    sha256 "63cffd24148c969245cceff561b18ba0b5b2b48dcb059e71425adad2d4ffe349"
-  end
-
-  fails_with :clang do
-    build 425
-    cause "https://bugs.python.org/issue24844"
-  end
+  url 'http://www.stackless.com/binaries/stackless-373-export.tar.xz'
+  sha256 "2cb8c7d1151196deb605d65c0b46778d392a1ed2efa623fd9f90b8f667d6a430"
+  head 'https://github.com/stackless-dev/stackless', :using => :git, :branch => '3.7-slp'
 
   # setuptools remembers the build flags python is built with and uses them to
   # build packages later. Xcode-only systems need different flags.
   pour_bottle? do
     reason <<~EOS
-    The bottle needs the Apple Command Line Tools to be installed.
-      You can install them, if desired, with:
-        xcode-select --install
+      The bottle needs the Apple Command Line Tools to be installed.
+        You can install them, if desired, with:
+          xcode-select --install
     EOS
     satisfy { MacOS::CLT.installed? }
   end
 
-  def install
-    ENV.permit_weak_imports
+  depends_on "pkg-config" => :build
+  depends_on "gdbm"
+  depends_on "openssl"
+  depends_on "readline"
+  depends_on "sqlite"
+  depends_on "xz"
 
+  skip_clean "bin/pip3", "bin/pip-3.4", "bin/pip-3.5", "bin/pip-3.6", "bin/pip-3.7"
+  skip_clean "bin/easy_install3", "bin/easy_install-3.4", "bin/easy_install-3.5", "bin/easy_install-3.6", "bin/easy_install-3.7"
+
+  resource "setuptools" do
+    url "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip"
+    sha256 "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d"
+  end
+
+  resource "pip" do
+    url "https://files.pythonhosted.org/packages/36/fa/51ca4d57392e2f69397cd6e5af23da2a8d37884a605f9e3f2d3bfdc48397/pip-19.0.3.tar.gz"
+    sha256 "6e6f197a1abfb45118dbb878b5c859a0edbdd33fd250100bc015b67fded4b9f2"
+  end
+
+  resource "wheel" do
+    url "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz"
+    sha256 "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
+  end
+
+  def install
     # Unset these so that installing pip and setuptools puts them where we want
     # and not into some other Python the user has installed.
     ENV["PYTHONHOME"] = nil
@@ -82,42 +56,41 @@ class Stackless3 < Formula
       --datarootdir=#{share}
       --datadir=#{share}
       --enable-framework=#{frameworks}
+      --enable-loadable-sqlite-extensions
       --without-ensurepip
       --with-dtrace
+      --with-openssl=#{Formula["openssl"].opt_prefix}
     ]
 
     args << "--without-gcc" if ENV.compiler == :clang
-    args << "--enable-loadable-sqlite-extensions" if build.with?("sqlite")
 
     cflags   = []
     ldflags  = []
     cppflags = []
 
-    unless MacOS::CLT.installed?
-      # Help Python's build system (setuptools/pip) to build things on Xcode-only systems
+    if MacOS.sdk_path_if_needed
+      # Help Python's build system (setuptools/pip) to build things on SDK-based systems
       # The setup.py looks at "-isysroot" to get the sysroot (and not at --sysroot)
-      cflags   << "-isysroot #{MacOS.sdk_path}"
-      ldflags  << "-isysroot #{MacOS.sdk_path}"
-      cppflags << "-I#{MacOS.sdk_path}/usr/include" # find zlib
+      cflags  << "-isysroot #{MacOS.sdk_path}" << "-I#{MacOS.sdk_path}/usr/include"
+      ldflags << "-isysroot #{MacOS.sdk_path}"
       # For the Xlib.h, Python needs this header dir with the system Tk
+      # Yep, this needs the absolute path where zlib needed a path relative
+      # to the SDK.
+      cflags << "-I#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"
     end
     # Avoid linking to libgcc https://mail.python.org/pipermail/python-dev/2012-February/116205.html
     args << "MACOSX_DEPLOYMENT_TARGET=#{MacOS.version}"
 
-    # We want our readline and openssl! This is just to outsmart the detection code,
+    # We want our readline! This is just to outsmart the detection code,
     # superenv makes cc always find includes/libs!
-    inreplace "setup.py" do |s|
-      s.gsub! "do_readline = self.compiler.find_library_file(lib_dirs, 'readline')",
-              "do_readline = '#{Formula["readline"].opt_lib}/libhistory.dylib'"
-      s.gsub! "/usr/local/ssl", Formula["openssl"].opt_prefix
-    end
+    inreplace "setup.py",
+      "do_readline = self.compiler.find_library_file(lib_dirs, 'readline')",
+      "do_readline = '#{Formula["readline"].opt_lib}/libhistory.dylib'"
 
-    if build.with? "sqlite"
-      inreplace "setup.py" do |s|
-        s.gsub! "sqlite_setup_debug = False", "sqlite_setup_debug = True"
-        s.gsub! "for d_ in inc_dirs + sqlite_inc_paths:",
-                "for d_ in ['#{Formula["sqlite"].opt_include}']:"
-      end
+    inreplace "setup.py" do |s|
+      s.gsub! "sqlite_setup_debug = False", "sqlite_setup_debug = True"
+      s.gsub! "for d_ in inc_dirs + sqlite_inc_paths:",
+              "for d_ in ['#{Formula["sqlite"].opt_include}']:"
     end
 
     # Allow python modules to use ctypes.find_library to find homebrew's stuff
@@ -133,11 +106,7 @@ class Stackless3 < Formula
     args << "CPPFLAGS=#{cppflags.join(" ")}" unless cppflags.empty?
 
     system "./configure", *args
-
     system "make"
-    if build.with?("quicktest")
-      system "make", "quicktest", "TESTPYTHONOPTS=-s", "TESTOPTS=-j#{ENV.make_jobs} -w"
-    end
 
     ENV.deparallelize do
       # Tell Python not to install into /Applications (default for framework builds)
@@ -159,6 +128,11 @@ class Stackless3 < Formula
               /^LINKFORSHARED=(.*)PYTHONFRAMEWORKDIR(.*)/,
               "LINKFORSHARED=\\1PYTHONFRAMEWORKINSTALLDIR\\2"
 
+    # Fix for https://github.com/Homebrew/homebrew-core/issues/21212
+    inreplace Dir[lib_cellar/"**/_sysconfigdata_m_darwin_darwin.py"],
+              %r{('LINKFORSHARED': .*?)'(Python.framework/Versions/3.\d+/Python)'}m,
+              "\\1'#{opt_prefix}/Frameworks/\\2'"
+
     # A fix, because python and python3 both want to install Python.framework
     # and therefore we can't link both into HOMEBREW_PREFIX/Frameworks
     # https://github.com/Homebrew/homebrew/issues/15943
@@ -168,9 +142,6 @@ class Stackless3 < Formula
     # Symlink the pkgconfig files into HOMEBREW_PREFIX so they're accessible.
     (lib/"pkgconfig").install_symlink Dir["#{frameworks}/Python.framework/Versions/#{xy}/lib/pkgconfig/*"]
 
-    # Remove 2to3 because python2 also installs it
-    rm bin/"2to3"
-
     # Remove the site-packages that Python created in its Cellar.
     (prefix/"Frameworks/Python.framework/Versions/#{xy}/lib/python#{xy}/site-packages").rmtree
 
@@ -178,18 +149,21 @@ class Stackless3 < Formula
       (libexec/r).install resource(r)
     end
 
-    if build.with? "sphinx-doc"
-      cd "Doc" do
-        system "make", "html"
-        doc.install Dir["build/html/*"]
-      end
+    # Install unversioned symlinks in libexec/bin.
+    {
+      "idle"          => "idle3",
+      "pydoc"         => "pydoc3",
+      "python"        => "python3",
+      "python-config" => "python3-config",
+    }.each do |unversioned_name, versioned_name|
+      (libexec/"bin").install_symlink (bin/versioned_name).realpath => unversioned_name
     end
   end
 
   def post_install
     ENV.delete "PYTHONPATH"
 
-    xy = (prefix/"Frameworks/Python.framework/Versions").children.first.basename.to_s
+    xy = (prefix/"Frameworks/Python.framework/Versions").children.min.basename.to_s
     site_packages = HOMEBREW_PREFIX/"lib/python#{xy}/site-packages"
     site_packages_cellar = prefix/"Frameworks/Python.framework/Versions/#{xy}/lib/python#{xy}/site-packages"
 
@@ -228,41 +202,49 @@ class Stackless3 < Formula
     rm_rf [bin/"pip", bin/"easy_install"]
     mv bin/"wheel", bin/"wheel3"
 
+    # Install unversioned symlinks in libexec/bin.
+    {
+      "easy_install" => "easy_install-#{xy}",
+      "pip"          => "pip3",
+      "wheel"        => "wheel3",
+    }.each do |unversioned_name, versioned_name|
+      (libexec/"bin").install_symlink (bin/versioned_name).realpath => unversioned_name
+    end
+
     # post_install happens after link
     %W[pip3 pip#{xy} easy_install-#{xy} wheel3].each do |e|
       (HOMEBREW_PREFIX/"bin").install_symlink bin/e
     end
 
     # Help distutils find brewed stuff when building extensions
-    include_dirs = [HOMEBREW_PREFIX/"include", Formula["openssl"].opt_include]
-    library_dirs = [HOMEBREW_PREFIX/"lib", Formula["openssl"].opt_lib]
-
-    if build.with? "sqlite"
-      include_dirs << Formula["sqlite"].opt_include
-      library_dirs << Formula["sqlite"].opt_lib
-    end
+    include_dirs = [HOMEBREW_PREFIX/"include", Formula["openssl"].opt_include,
+                    Formula["sqlite"].opt_include]
+    library_dirs = [HOMEBREW_PREFIX/"lib", Formula["openssl"].opt_lib,
+                    Formula["sqlite"].opt_lib]
 
     cfg = prefix/"Frameworks/Python.framework/Versions/#{xy}/lib/python#{xy}/distutils/distutils.cfg"
 
-    cfg.atomic_write <<-EOF.undent
+    cfg.atomic_write <<~EOS
       [install]
       prefix=#{HOMEBREW_PREFIX}
+
       [build_ext]
       include_dirs=#{include_dirs.join ":"}
       library_dirs=#{library_dirs.join ":"}
-    EOF
+    EOS
   end
 
   def sitecustomize
-    xy = (prefix/"Frameworks/Python.framework/Versions").children.first.basename.to_s
+    xy = (prefix/"Frameworks/Python.framework/Versions").children.min.basename.to_s
 
-    <<-EOF.undent
+    <<~EOS
       # This file is created by Homebrew and is executed on each python startup.
       # Don't print from here, or else python command line scripts may fail!
-      # <https://docs.brew.sh/Homebrew-and-Python.html>
+      # <https://docs.brew.sh/Homebrew-and-Python>
       import re
       import os
       import sys
+
       if sys.version_info[0] != 3:
           # This can only happen if the user has set the PYTHONPATH for 3.x and run Python 2.x or vice versa.
           # Every Python looks at the PYTHONPATH variable and we can't fix it here in sitecustomize.py,
@@ -272,6 +254,7 @@ class Stackless3 < Formula
           exit('Your PYTHONPATH points to a site-packages dir for Python 3.x but you are running Python ' +
                str(sys.version_info[0]) + '.x!\\n     PYTHONPATH is currently: "' + str(os.environ['PYTHONPATH']) + '"\\n' +
                '     You should `unset PYTHONPATH` to fix this.')
+
       # Only do this for a brewed python:
       if os.path.realpath(sys.executable).startswith('#{rack}'):
           # Shuffle /Library site-packages to the end of sys.path
@@ -280,91 +263,56 @@ class Stackless3 < Formula
           sys.path = [p for p in sys.path if not p.startswith(library_site)]
           # .pth files have already been processed so don't use addsitedir
           sys.path.extend(library_packages)
+
           # the Cellar site-packages is a symlink to the HOMEBREW_PREFIX
           # site_packages; prefer the shorter paths
           long_prefix = re.compile(r'#{rack}/[0-9\._abrc]+/Frameworks/Python\.framework/Versions/#{xy}/lib/python#{xy}/site-packages')
           sys.path = [long_prefix.sub('#{HOMEBREW_PREFIX/"lib/python#{xy}/site-packages"}', p) for p in sys.path]
-          # Set the sys.executable to use the opt_prefix
-          sys.executable = '#{opt_bin}/python#{xy}'
-    EOF
+
+          # Set the sys.executable to use the opt_prefix, unless explicitly set
+          # with PYTHONEXECUTABLE:
+          if 'PYTHONEXECUTABLE' not in os.environ:
+              sys.executable = '#{opt_bin}/python#{xy}'
+    EOS
   end
 
   def caveats
     if prefix.exist?
-      xy = (prefix/"Frameworks/Python.framework/Versions").children.first.basename.to_s
+      xy = (prefix/"Frameworks/Python.framework/Versions").children.min.basename.to_s
     else
-      xy = version.to_s.slice(/(3\.\d)/) || "3.5"
+      xy = version.to_s.slice(/(3\.\d)/) || "3.7"
     end
-    text = <<~EOS
-      Pip, setuptools, and wheel have been installed. To update them
-        pip3 install --upgrade pip setuptools wheel
+    <<~EOS
+      Python has been installed as
+        #{HOMEBREW_PREFIX}/bin/python3
+
+      Unversioned symlinks `python`, `python-config`, `pip` etc. pointing to
+      `python3`, `python3-config`, `pip3` etc., respectively, have been installed into
+        #{opt_libexec}/bin
+
+      If you need Homebrew's Python 2.7 run
+        brew install python@2
+
       You can install Python packages with
         pip3 install <package>
       They will install into the site-package directory
         #{HOMEBREW_PREFIX/"lib/python#{xy}/site-packages"}
-      See: https://docs.brew.sh/Homebrew-and-Python.html
-    EOS
 
-    text
+      See: https://docs.brew.sh/Homebrew-and-Python
+    EOS
   end
 
-  keg_only "avoid conflicts betweeb CPython and Stackless"
+  keg_only "avoid conflicts between CPython and Stackless"
 
   test do
-    xy = (prefix/"Frameworks/Python.framework/Versions").children.first.basename.to_s
+    xy = (prefix/"Frameworks/Python.framework/Versions").children.min.basename.to_s
     # Check if sqlite is ok, because we build with --enable-loadable-sqlite-extensions
     # and it can occur that building sqlite silently fails if OSX's sqlite is used.
     system "#{bin}/python#{xy}", "-c", "import sqlite3"
-    system bin/"pip3", "list"
+    # Check if some other modules import. Then the linked libs are working.
+    system "#{bin}/python#{xy}", "-c", "import tkinter; root = tkinter.Tk()"
+    system "#{bin}/python#{xy}", "-c", "import _gdbm"
+    system "#{bin}/python#{xy}", "-c", "import zlib"
+    system bin/"pip3", "list", "--format=columns"
   end
 end
-
-__END__
-diff --git a/setup.py b/setup.py
-index 2779658..902d0eb 100644
---- a/setup.py
-+++ b/setup.py
-@@ -1699,9 +1699,6 @@ class PyBuildExt(build_ext):
-         # Rather than complicate the code below, detecting and building
-         # AquaTk is a separate method. Only one Tkinter will be built on
-         # Darwin - either AquaTk, if it is found, or X11 based Tk.
--        if (host_platform == 'darwin' and
--            self.detect_tkinter_darwin(inc_dirs, lib_dirs)):
--            return
-
-         # Assume we haven't found any of the libraries or include files
-         # The versions with dots are used on Unix, and the versions without
-@@ -1747,22 +1744,6 @@ class PyBuildExt(build_ext):
-             if dir not in include_dirs:
-                 include_dirs.append(dir)
-
--        # Check for various platform-specific directories
--        if host_platform == 'sunos5':
--            include_dirs.append('/usr/openwin/include')
--            added_lib_dirs.append('/usr/openwin/lib')
--        elif os.path.exists('/usr/X11R6/include'):
--            include_dirs.append('/usr/X11R6/include')
--            added_lib_dirs.append('/usr/X11R6/lib64')
--            added_lib_dirs.append('/usr/X11R6/lib')
--        elif os.path.exists('/usr/X11R5/include'):
--            include_dirs.append('/usr/X11R5/include')
--            added_lib_dirs.append('/usr/X11R5/lib')
--        else:
--            # Assume default location for X11
--            include_dirs.append('/usr/X11/include')
--            added_lib_dirs.append('/usr/X11/lib')
--
-         # If Cygwin, then verify that X is installed before proceeding
-         if host_platform == 'cygwin':
-             x11_inc = find_file('X11/Xlib.h', [], include_dirs)
-@@ -1786,10 +1767,6 @@ class PyBuildExt(build_ext):
-         if host_platform in ['aix3', 'aix4']:
-             libs.append('ld')
-
--        # Finally, link with the X11 libraries (not appropriate on cygwin)
--        if host_platform != "cygwin":
--            libs.append('X11')
--
-         ext = Extension('_tkinter', ['_tkinter.c', 'tkappinit.c'],
-                         define_macros=[('WITH_APPINIT', 1)] + defs,
-                         include_dirs = include_dirs,
