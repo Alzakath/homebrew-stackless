@@ -91,6 +91,8 @@ class Stackless < Formula
       # Yep, this needs the absolute path where zlib needed a path relative
       # to the SDK.
       cflags  << "-I#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"
+      # find zlib
+      cppflags << "-I#{MacOS.sdk_path}/usr/include"
     end
 
     # Avoid linking to libgcc https://code.activestate.com/lists/python-dev/112195/
