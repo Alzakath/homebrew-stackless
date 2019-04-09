@@ -162,10 +162,10 @@ class Stackless < Formula
     (libexec/"pip").install resource("pip")
     (libexec/"wheel").install resource("wheel")
 
-    cd "Doc" do
-      system "make", "html"
-      doc.install Dir["build/html/*"]
-    end
+    # cd "Doc" do
+    #   system "make", "html"
+    #   doc.install Dir["build/html/*"]
+    # end
   end
 
   def post_install
