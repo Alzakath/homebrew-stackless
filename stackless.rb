@@ -1,64 +1,42 @@
+
 class Stackless < Formula
   desc "Interpreted, interactive, object-oriented programming language"
   homepage "http://www.stackless.com"
-  url "http://www.stackless.com/binaries/stackless-2714-export.tar.xz"
-  sha256 "71cb5a17b1caa4c0220ccc1c0651ab97295941e2f15a50d70ff717b7e2ae9d05"
+  url "http://www.stackless.com/binaries/stackless-2716-export.tar.xz"
+  sha256 "2db64fbd47567a1c0683fba7a54387892d2299915f9848b54c450b5eb95358dc"
   head 'https://github.com/stackless-dev/stackless', :using => :git, :branch => '2.7-slp'
 
-  # Please don't add a wide/ucs4 option as it won't be accepted.
-  # More details in: https://github.com/Homebrew/homebrew/pull/32368
-  option "with-quicktest", "Run `make quicktest` after the build (for devs; may fail)"
-  option "with-poll", "Enable select.poll, which is not fully implemented on macOS (https://bugs.python.org/issue5154)"
-
-  # sphinx-doc depends on python, but on 10.6 or earlier python is fulfilled by
-  # brew, which would lead to circular dependency.
-  if MacOS.version > :snow_leopard
-    option "with-sphinx-doc", "Build HTML documentation"
-    depends_on "sphinx-doc" => [:build, :optional]
+  # setuptools remembers the build flags python is built with and uses them to
+  # build packages later. Xcode-only systems need different flags.
+  pour_bottle? do
+    reason <<~EOS
+      The bottle needs the Apple Command Line Tools to be installed.
+        You can install them, if desired, with:
+          xcode-select --install
+    EOS
+    satisfy { MacOS::CLT.installed? }
   end
 
-  deprecated_option "quicktest" => "with-quicktest"
-
   depends_on "pkg-config" => :build
-  depends_on "readline" => :recommended
-  depends_on "sqlite" => :recommended
-  depends_on "gdbm" => :recommended
+  depends_on "sphinx-doc" => :build
+  depends_on "gdbm"
   depends_on "openssl"
-  depends_on "berkeley-db@4" => :optional
-
-  skip_clean "bin/pip", "bin/pip-2.7"
-  skip_clean "bin/easy_install", "bin/easy_install-2.7"
-  skip_clean "bin/virtualenv"
-  skip_clean "bin/virtualenv-clone", "bin/virtualenvwrapper.sh", "bin/virtualenvwrapper_lazy.sh"
+  depends_on "readline"
+  depends_on "sqlite"
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/1a/04/d6f1159feaccdfc508517dba1929eb93a2854de729fa68da9d5c6b48fa00/setuptools-39.2.0.zip"
-    sha256 "f7cddbb5f5c640311eb00eab6e849f7701fa70bf6a183fc8a2c33dd1d1672fb2"
+    url "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip"
+    sha256 "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d"
   end
 
   resource "pip" do
-    url "https://files.pythonhosted.org/packages/ae/e8/2340d46ecadb1692a1e455f13f75e596d4eab3d11a57446f08259dee8f02/pip-10.0.1.tar.gz"
-    sha256 "f2bd08e0cd1b06e10218feaf6fef299f473ba706582eb3bd9d52203fdbd7ee68"
+    url "https://files.pythonhosted.org/packages/36/fa/51ca4d57392e2f69397cd6e5af23da2a8d37884a605f9e3f2d3bfdc48397/pip-19.0.3.tar.gz"
+    sha256 "6e6f197a1abfb45118dbb878b5c859a0edbdd33fd250100bc015b67fded4b9f2"
   end
 
   resource "wheel" do
-    url "https://files.pythonhosted.org/packages/2a/fb/aefe5d5dbc3f4fe1e815bcdb05cbaab19744d201bbc9b59cfa06ec7fc789/wheel-0.31.1.tar.gz"
-    sha256 "0a2e54558a0628f2145d2fc822137e322412115173e8a2ddbe1c9024338ae83c"
-  end
-
-  resource "virtualenv" do
-    url "https://files.pythonhosted.org/packages/33/bc/fa0b5347139cd9564f0d44ebd2b147ac97c36b2403943dbee8a25fd74012/virtualenv-16.0.0.tar.gz"
-    sha256 "ca07b4c0b54e14a91af9f34d0919790b016923d157afda5efdde55c96718f752"
-  end
-
-  resource "virtualenvwrapper" do
-    url "https://files.pythonhosted.org/packages/dc/bf/5ea6941c9511bb0ae842e673e6ac2dc6811b9078ae14ac04ccf050ab6cc6/virtualenvwrapper-4.8.2.tar.gz"
-    sha256 "18d8e4c500c4c4ee794f704e050cf2bbb492537532a4521d1047e7dd1ee4e374"
-  end
-
-  resource "pbr" do
-      url "https://files.pythonhosted.org/packages/cd/9f/8f14a51b522c47a315dd969fbdf39233e41f0bfa8b996b4ff0ad852ff43d/pbr-4.0.4.tar.gz"
-      sha256 "a9c27eb8f0e24e786e544b2dbaedb729c9d8546342b5a6818d8eda098ad4340d"
+    url "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz"
+    sha256 "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
   end
 
   def lib_cellar
@@ -69,24 +47,12 @@ class Stackless < Formula
     lib_cellar/"site-packages"
   end
 
-  # setuptools remembers the build flags python is built with and uses them to
-  # build packages later. Xcode-only systems need different flags.
-  pour_bottle? do
-    reason <<~EOS
-    The bottle needs the Apple Command Line Tools to be installed.
-      You can install them, if desired, with:
-        xcode-select --install
-    EOS
-    satisfy { MacOS::CLT.installed? }
+  # The HOMEBREW_PREFIX location of site-packages.
+  def site_packages
+    HOMEBREW_PREFIX/"lib/python2.7/site-packages"
   end
 
   def install
-    ENV.permit_weak_imports
-
-    if build.with? "poll"
-      opoo "The given option --with-poll enables a somewhat broken poll() on macOS (https://bugs.python.org/issue5154)."
-    end
-
     # Unset these so that installing pip and setuptools puts them where we want
     # and not into some other Python the user has installed.
     ENV["PYTHONHOME"] = nil
@@ -101,18 +67,30 @@ class Stackless < Formula
       --without-ensurepip
     ]
 
+    # See upstream bug report from 22 Jan 2018 "Significant performance problems
+    # with Python 2.7 built with clang 3.x or 4.x"
+    # https://bugs.python.org/issue32616
+    # https://github.com/Homebrew/homebrew-core/issues/22743
+    if DevelopmentTools.clang_build_version >= 802 &&
+       DevelopmentTools.clang_build_version < 902
+      args << "--without-computed-gotos"
+    end
+
     args << "--without-gcc" if ENV.compiler == :clang
 
     cflags   = []
     ldflags  = []
     cppflags = []
 
-    unless MacOS::CLT.installed?
-      # Help Python's build system (setuptools/pip) to build things on Xcode-only systems
+    if MacOS.sdk_path_if_needed
+      # Help Python's build system (setuptools/pip) to build things on SDK-based systems
       # The setup.py looks at "-isysroot" to get the sysroot (and not at --sysroot)
-      cflags   << "-isysroot #{MacOS.sdk_path}"
-      ldflags  << "-isysroot #{MacOS.sdk_path}"
-      cppflags << "-I#{MacOS.sdk_path}/usr/include" # find zlib
+      cflags  << "-isysroot #{MacOS.sdk_path}" << "-I#{MacOS.sdk_path}/usr/include"
+      ldflags << "-isysroot #{MacOS.sdk_path}"
+      # For the Xlib.h, Python needs this header dir with the system Tk
+      # Yep, this needs the absolute path where zlib needed a path relative
+      # to the SDK.
+      cflags  << "-I#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"
     end
 
     # Avoid linking to libgcc https://code.activestate.com/lists/python-dev/112195/
@@ -124,19 +102,16 @@ class Stackless < Formula
       s.gsub! "do_readline = self.compiler.find_library_file(lib_dirs, 'readline')",
               "do_readline = '#{Formula["readline"].opt_lib}/libhistory.dylib'"
       s.gsub! "/usr/local/ssl", Formula["openssl"].opt_prefix
-      s.gsub! "/usr/include/db4", Formula["berkeley-db@4"].opt_include
     end
 
-    if build.with? "sqlite"
-      inreplace "setup.py" do |s|
-        s.gsub! "sqlite_setup_debug = False", "sqlite_setup_debug = True"
-        s.gsub! "for d_ in inc_dirs + sqlite_inc_paths:",
-                "for d_ in ['#{Formula["sqlite"].opt_include}']:"
+    inreplace "setup.py" do |s|
+      s.gsub! "sqlite_setup_debug = False", "sqlite_setup_debug = True"
+      s.gsub! "for d_ in inc_dirs + sqlite_inc_paths:",
+              "for d_ in ['#{Formula["sqlite"].opt_include}']:"
 
-        # Allow sqlite3 module to load extensions:
-        # https://docs.python.org/library/sqlite3.html#f1
-        s.gsub! 'sqlite_defines.append(("SQLITE_OMIT_LOAD_EXTENSION", "1"))', ""
-      end
+      # Allow sqlite3 module to load extensions:
+      # https://docs.python.org/library/sqlite3.html#f1
+      s.gsub! 'sqlite_defines.append(("SQLITE_OMIT_LOAD_EXTENSION", "1"))', ""
     end
 
     # Allow python modules to use ctypes.find_library to find homebrew's stuff
@@ -152,18 +127,7 @@ class Stackless < Formula
     args << "CPPFLAGS=#{cppflags.join(" ")}" unless cppflags.empty?
 
     system "./configure", *args
-
-    # HAVE_POLL is "broken" on macOS. See:
-    # https://trac.macports.org/ticket/18376
-    # https://bugs.python.org/issue5154
-    if build.without? "poll"
-      inreplace "pyconfig.h", /.*?(HAVE_POLL[_A-Z]*).*/, '#undef \1'
-    end
-
     system "make"
-    if build.with?("quicktest") || build.bottle?
-      system "make", "quicktest", "TESTPYTHONOPTS=-s", "TESTOPTS=-j#{ENV.make_jobs} -w"
-    end
 
     ENV.deparallelize do
       # Tell Python not to install into /Applications
@@ -188,86 +152,91 @@ class Stackless < Formula
     # Symlink the pkgconfig files into HOMEBREW_PREFIX so they're accessible.
     (lib/"pkgconfig").install_symlink Dir[frameworks/"Python.framework/Versions/Current/lib/pkgconfig/*"]
 
+    # Remove 2to3 because Python 3 also installs it
+    rm bin/"2to3"
+
     # Remove the site-packages that Python created in its Cellar.
-    #site_packages_cellar.rmtree
+    site_packages_cellar.rmtree
 
     (libexec/"setuptools").install resource("setuptools")
     (libexec/"pip").install resource("pip")
     (libexec/"wheel").install resource("wheel")
-    (libexec/"virtualenv").install resource("virtualenv")
-    (libexec/"pbr").install resource("pbr")
-    (libexec/"virtualenvwrapper").install resource("virtualenvwrapper")
 
-    if MacOS.version > :snow_leopard && build.with?("sphinx-doc")
-      cd "Doc" do
-        system "make", "html"
-        doc.install Dir["build/html/*"]
-      end
+    cd "Doc" do
+      system "make", "html"
+      doc.install Dir["build/html/*"]
     end
   end
 
   def post_install
+    # Avoid conflicts with lingering unversioned files from Python 3
+    rm_f %W[
+      #{HOMEBREW_PREFIX}/bin/easy_install
+      #{HOMEBREW_PREFIX}/bin/pip
+      #{HOMEBREW_PREFIX}/bin/wheel
+    ]
+
     # Fix up the site-packages so that user-installed Python software survives
     # minor updates, such as going from 2.7.0 to 2.7.1:
 
-    # Create a site-packages in Cellar
-    site_packages_cellar.mkpath
+    # Create a site-packages in HOMEBREW_PREFIX/lib/python2.7/site-packages
+    site_packages.mkpath
 
     # Symlink the prefix site-packages into the cellar.
-    #site_packages_cellar.unlink if site_packages_cellar.exist?
-    #site_packages_cellar.parent.install_symlink site_packages
+    site_packages_cellar.unlink if site_packages_cellar.exist?
+    site_packages_cellar.parent.install_symlink site_packages
 
     # Write our sitecustomize.py
-    rm_rf Dir["#{site_packages_cellar}/sitecustomize.py[co]"]
-    (site_packages_cellar/"sitecustomize.py").atomic_write(sitecustomize)
+    rm_rf Dir["#{site_packages}/sitecustomize.py[co]"]
+    (site_packages/"sitecustomize.py").atomic_write(sitecustomize)
 
     # Remove old setuptools installations that may still fly around and be
     # listed in the easy_install.pth. This can break setuptools build with
     # zipimport.ZipImportError: bad local file header
     # setuptools-0.9.5-py3.3.egg
-    rm_rf Dir["#{site_packages_cellar}/setuptools*"]
-    rm_rf Dir["#{site_packages_cellar}/distribute*"]
-    rm_rf Dir["#{site_packages_cellar}/pip[-_.][0-9]*", "#{site_packages_cellar}/pip"]
-    rm_rf Dir["#{site_packages_cellar}/virtualenv*"]
-    rm_rf Dir["#{site_packages_cellar}/pbr*"]
-    rm_rf Dir["#{site_packages_cellar}/virtualenvwrapper*"]
+    rm_rf Dir["#{site_packages}/setuptools*"]
+    rm_rf Dir["#{site_packages}/distribute*"]
+    rm_rf Dir["#{site_packages}/pip[-_.][0-9]*", "#{site_packages}/pip"]
 
     setup_args = ["-s", "setup.py", "--no-user-cfg", "install", "--force",
                   "--verbose",
                   "--single-version-externally-managed",
                   "--record=installed.txt",
                   "--install-scripts=#{bin}",
-                  "--install-lib=#{site_packages_cellar}"]
+                  "--install-lib=#{site_packages}"]
 
-    (libexec/"setuptools").cd { system "#{bin}/python2", *setup_args }
-    (libexec/"pip").cd { system "#{bin}/python2", *setup_args }
-    (libexec/"wheel").cd { system "#{bin}/python2", *setup_args }
-    (libexec/"virtualenv").cd { system "#{bin}/python2", *setup_args }
-    (libexec/"pbr").cd { system "#{bin}/python2", *setup_args }
-    (libexec/"virtualenvwrapper").cd { system "#{bin}/python2", *setup_args }
+    (libexec/"setuptools").cd { system "#{bin}/python", *setup_args }
+    (libexec/"pip").cd { system "#{bin}/python", *setup_args }
+    (libexec/"wheel").cd { system "#{bin}/python", *setup_args }
 
-    # Help distutils find brewed stuff when building extensions
-    include_dirs = [HOMEBREW_PREFIX/"include", Formula["openssl"].opt_include]
-    library_dirs = [HOMEBREW_PREFIX/"lib", Formula["openssl"].opt_lib]
-
-    if build.with? "sqlite"
-      include_dirs << Formula["sqlite"].opt_include
-      library_dirs << Formula["sqlite"].opt_lib
+    # When building from source, these symlinks will not exist, since
+    # post_install happens after linking.
+    %w[pip pip2 pip2.7 easy_install easy_install-2.7 wheel].each do |e|
+      (HOMEBREW_PREFIX/"bin").install_symlink bin/e
     end
 
+    # Help distutils find brewed stuff when building extensions
+    include_dirs = [HOMEBREW_PREFIX/"include", Formula["openssl"].opt_include,
+                    Formula["sqlite"].opt_include]
+    library_dirs = [HOMEBREW_PREFIX/"lib", Formula["openssl"].opt_lib,
+                    Formula["sqlite"].opt_lib]
+
     cfg = lib_cellar/"distutils/distutils.cfg"
-    cfg.atomic_write <<-EOF
+    cfg.atomic_write <<~EOS
+      [install]
+      prefix=#{HOMEBREW_PREFIX}
+
       [build_ext]
       include_dirs=#{include_dirs.join ":"}
       library_dirs=#{library_dirs.join ":"}
-    EOF
+    EOS
   end
 
   def sitecustomize
-    <<-EOF
+    <<~EOS
       # This file is created by Homebrew and is executed on each python startup.
       # Don't print from here, or else python command line scripts may fail!
-      # <http://docs.brew.sh/Homebrew-and-Python.html>
+      # <https://docs.brew.sh/Homebrew-and-Python>
       import re
       import os
       import sys
@@ -293,10 +262,15 @@ class Stackless < Formula
           # .pth files have already been processed so don't use addsitedir
           sys.path.extend(library_packages)
 
+          # the Cellar site-packages is a symlink to the HOMEBREW_PREFIX
+          # site_packages; prefer the shorter paths
+          long_prefix = re.compile(r'#{rack}/[0-9\._abrc]+/Frameworks/Python\.framework/Versions/2\.7/lib/python2\.7/site-packages')
+          sys.path = [long_prefix.sub('#{site_packages}', p) for p in sys.path]
+
           # LINKFORSHARED (and python-config --ldflags) return the
           # full path to the lib (yes, "Python" is actually the lib, not a
           # dir) so that third-party software does not need to add the
-          # -F/#{opt_prefix}/Frameworks switch.
+          # -F/#{HOMEBREW_PREFIX}/Frameworks switch.
           try:
               from _sysconfigdata import build_time_vars
               build_time_vars['LINKFORSHARED'] = '-u _PyMac_Error #{opt_prefix}/Frameworks/Python.framework/Versions/2.7/Python'
@@ -305,7 +279,7 @@ class Stackless < Formula
 
           # Set the sys.executable to use the opt_prefix
           sys.executable = '#{opt_bin}/python2.7'
-    EOF
+    EOS
   end
 
   def caveats; <<~EOS
@@ -316,19 +290,22 @@ class Stackless < Formula
       pip install <package>
 
     They will install into the site-package directory
-      #{site_packages_cellar}
+      #{site_packages}
 
-    See: http://docs.brew.sh/Homebrew-and-Python.html
-    EOS
+    See: https://docs.brew.sh/Homebrew-and-Python
+  EOS
   end
 
-  keg_only "avoid conflicts betweeb CPython and Stackless"
+  keg_only "avoid conflicts between CPython and Stackless"
 
   test do
     # Check if sqlite is ok, because we build with --enable-loadable-sqlite-extensions
     # and it can occur that building sqlite silently fails if OSX's sqlite is used.
     system "#{bin}/python", "-c", "import sqlite3"
     # Check if some other modules import. Then the linked libs are working.
-    system "#{bin}/pip", "list"
+    system "#{bin}/python", "-c", "import Tkinter; root = Tkinter.Tk()"
+    system "#{bin}/python", "-c", "import gdbm"
+    system "#{bin}/python", "-c", "import zlib"
+    system bin/"pip", "list", "--format=columns"
   end
 end
