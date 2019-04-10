@@ -39,6 +39,21 @@ class Stackless < Formula
     sha256 "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
   end
 
+  resource "virtualenv" do
+    url "https://files.pythonhosted.org/packages/37/db/89d6b043b22052109da35416abc3c397655e4bd3cff031446ba02b9654fa/virtualenv-16.4.3.tar.gz"
+    sha256 "984d7e607b0a5d1329425dd8845bd971b957424b5ba664729fab51ab8c11bc39"
+  end
+
+  resource "virtualenvwrapper" do
+    url "https://files.pythonhosted.org/packages/c1/6b/2f05d73b2d2f2410b48b90d3783a0034c26afa534a4a95ad5f1178d61191/virtualenvwrapper-4.8.4.tar.gz"
+    sha256 "51a1a934e7ed0ff221bdd91bf9d3b604d875afbb3aa2367133503fee168f5bfa"
+  end
+
+  resource "pbr" do
+      url "https://files.pythonhosted.org/packages/97/76/c151aa4a3054ce63bb6bbd32f3541e4ae068534ed8b74ee2687f6773b013/pbr-5.1.3.tar.gz"
+      sha256 "8c361cc353d988e4f5b998555c88098b9d5964c2e11acf7b0d21925a66bb5824"
+end
+
   def lib_cellar
     prefix/"Frameworks/Python.framework/Versions/2.7/lib/python2.7"
   end
@@ -163,6 +178,9 @@ class Stackless < Formula
     (libexec/"setuptools").install resource("setuptools")
     (libexec/"pip").install resource("pip")
     (libexec/"wheel").install resource("wheel")
+    (libexec/"virtualenv").install resource("virtualenv")
+    (libexec/"pbr").install resource("pbr")
+    (libexec/"virtualenvwrapper").install resource("virtualenvwrapper")
 
     # cd "Doc" do
     #   system "make", "html"
