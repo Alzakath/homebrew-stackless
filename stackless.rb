@@ -217,6 +217,9 @@ end
     rm_rf Dir["#{site_packages}/setuptools*"]
     rm_rf Dir["#{site_packages}/distribute*"]
     rm_rf Dir["#{site_packages}/pip[-_.][0-9]*", "#{site_packages}/pip"]
+    rm_rf Dir["#{site_packages_cellar}/virtualenv*"]
+    rm_rf Dir["#{site_packages_cellar}/pbr*"]
+    rm_rf Dir["#{site_packages_cellar}/virtualenvwrapper*"]
 
     setup_args = ["-s", "setup.py", "--no-user-cfg", "install", "--force",
                   "--verbose",
@@ -228,10 +231,13 @@ end
     (libexec/"setuptools").cd { system "#{bin}/python", *setup_args }
     (libexec/"pip").cd { system "#{bin}/python", *setup_args }
     (libexec/"wheel").cd { system "#{bin}/python", *setup_args }
+    (libexec/"virtualenv").cd { system "#{bin}/python", *setup_args }
+    (libexec/"pbr").cd { system "#{bin}/python", *setup_args }
+    (libexec/"virtualenvwrapper").cd { system "#{bin}/python", *setup_args }
 
     # When building from source, these symlinks will not exist, since
     # post_install happens after linking.
-    %w[pip pip2 pip2.7 easy_install easy_install-2.7 wheel].each do |e|
+    %w[pip pip2 pip2.7 easy_install easy_install-2.7 wheel virtualenvwrapper.sh].each do |e|
       (HOMEBREW_PREFIX/"bin").install_symlink bin/e
     end
 
