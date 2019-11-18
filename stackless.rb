@@ -38,6 +38,11 @@ class Stackless < Formula
     sha256 "10c9da68765315ed98850f8e048347c3eb06dd81822dc2ab1d4fde9dc9702646"
   end
 
+  patch do
+    url "https://raw.githubusercontent.com/Alzakath/homebrew-stackless/master/stackless-macos-10.14.patch"
+    sha256 "242c11c9fa7c0dcb74d226640255bbb40f453873525a73083b1d23089008ad1d"
+  end
+
   def lib_cellar
     prefix/"Frameworks/Python.framework/Versions/2.7/lib/python2.7"
   end
