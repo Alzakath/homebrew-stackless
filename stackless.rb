@@ -24,8 +24,8 @@ class Stackless < Formula
   depends_on "sqlite"
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/f4/d5/a6c19dcbcbc267aca376558797f036d9bcdff344c9f785fe7d0fe9a5f2a7/setuptools-41.4.0.zip"
-    sha256 "7eae782ccf36b790c21bde7d86a4f303a441cd77036b25c559a602cf5186ce4d"
+    url "https://files.pythonhosted.org/packages/f4/d5/a6c19dcbcbc267aca376558797f036d9bcdff344c9f785fe7d0fe9a5f2a7/setuptools-41.6.0.zip"
+    sha256 "6afa61b391dcd16cb8890ec9f66cc4015a8a31a6e1c2b4e0c464514be1a3d722"
   end
 
   resource "pip" do
@@ -36,6 +36,21 @@ class Stackless < Formula
   resource "wheel" do
     url "https://files.pythonhosted.org/packages/59/b0/11710a598e1e148fb7cbf9220fd2a0b82c98e94efbdecb299cb25e7f0b39/wheel-0.33.6.tar.gz"
     sha256 "10c9da68765315ed98850f8e048347c3eb06dd81822dc2ab1d4fde9dc9702646"
+  end
+
+  resource "virtualenv" do
+    url "https://files.pythonhosted.org/packages/37/db/89d6b043b22052109da35416abc3c397655e4bd3cff031446ba02b9654fa/virtualenv-16.7.7.tar.gz"
+    sha256 "d257bb3773e48cac60e475a19b608996c73f4d333b3ba2e4e57d5ac6134e0136"
+  end
+
+  resource "virtualenvwrapper" do
+    url "https://files.pythonhosted.org/packages/c1/6b/2f05d73b2d2f2410b48b90d3783a0034c26afa534a4a95ad5f1178d61191/virtualenvwrapper-4.8.4.tar.gz"
+    sha256 "51a1a934e7ed0ff221bdd91bf9d3b604d875afbb3aa2367133503fee168f5bfa"
+  end
+
+  resource "pbr" do
+      url "https://files.pythonhosted.org/packages/97/76/c151aa4a3054ce63bb6bbd32f3541e4ae068534ed8b74ee2687f6773b013/pbr-5.4.3.tar.gz"
+      sha256 "2c8e420cd4ed4cec4e7999ee47409e876af575d4c35a45840d59e8b5f3155ab8"
   end
 
   patch do
@@ -165,6 +180,9 @@ class Stackless < Formula
     (libexec/"setuptools").install resource("setuptools")
     (libexec/"pip").install resource("pip")
     (libexec/"wheel").install resource("wheel")
+    (libexec/"virtualenv").install resource("virtualenv")
+    (libexec/"pbr").install resource("pbr")
+    (libexec/"virtualenvwrapper").install resource("virtualenvwrapper")
   end
 
   def post_install
@@ -196,6 +214,9 @@ class Stackless < Formula
     rm_rf Dir["#{site_packages}/setuptools*"]
     rm_rf Dir["#{site_packages}/distribute*"]
     rm_rf Dir["#{site_packages}/pip[-_.][0-9]*", "#{site_packages}/pip"]
+    rm_rf Dir["#{site_packages_cellar}/virtualenv*"]
+    rm_rf Dir["#{site_packages_cellar}/pbr*"]
+    rm_rf Dir["#{site_packages_cellar}/virtualenvwrapper*"]
 
     setup_args = ["-s", "setup.py", "--no-user-cfg", "install", "--force",
                   "--verbose",
@@ -207,10 +228,13 @@ class Stackless < Formula
     (libexec/"setuptools").cd { system "#{bin}/python", *setup_args }
     (libexec/"pip").cd { system "#{bin}/python", *setup_args }
     (libexec/"wheel").cd { system "#{bin}/python", *setup_args }
+    (libexec/"virtualenv").cd { system "#{bin}/python", *setup_args }
+    (libexec/"pbr").cd { system "#{bin}/python", *setup_args }
+    (libexec/"virtualenvwrapper").cd { system "#{bin}/python", *setup_args }
 
     # When building from source, these symlinks will not exist, since
     # post_install happens after linking.
-    %w[pip pip2 pip2.7 easy_install easy_install-2.7 wheel].each do |e|
+    %w[pip pip2 pip2.7 easy_install easy_install-2.7 wheel virtualenvwrapper.sh].each do |e|
       (HOMEBREW_PREFIX/"bin").install_symlink bin/e
     end
 
