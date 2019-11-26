@@ -1,9 +1,9 @@
 class Stackless3 < Formula
   desc "Interpreted, interactive, object-oriented programming language"
-  homepage "http://www.stackless.com"
-  url 'http://www.stackless.com/binaries/stackless-373-export.tar.xz'
-  sha256 "2cb8c7d1151196deb605d65c0b46778d392a1ed2efa623fd9f90b8f667d6a430"
-  head 'https://github.com/stackless-dev/stackless', :using => :git, :branch => '3.7-slp'
+  homepage "https://www.stackless.com/"
+  url "http://www.stackless.com/binaries/stackless-375-export.tar.xz"
+  sha256 "a2cfe3866f7c512660ab69c252c454ed596ebc117a4c637028934a2cec79759d"
+  head "https://github.com/stackless-dev/stackless.git"
 
   # setuptools remembers the build flags python is built with and uses them to
   # build packages later. Xcode-only systems need different flags.
@@ -18,7 +18,7 @@ class Stackless3 < Formula
 
   depends_on "pkg-config" => :build
   depends_on "gdbm"
-  depends_on "openssl"
+  depends_on "openssl@1.1"
   depends_on "readline"
   depends_on "sqlite"
   depends_on "xz"
@@ -27,18 +27,18 @@ class Stackless3 < Formula
   skip_clean "bin/easy_install3", "bin/easy_install-3.4", "bin/easy_install-3.5", "bin/easy_install-3.6", "bin/easy_install-3.7"
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip"
-    sha256 "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d"
+    url "https://files.pythonhosted.org/packages/11/0a/7f13ef5cd932a107cd4c0f3ebc9d831d9b78e1a0e8c98a098ca17b1d7d97/setuptools-41.6.0.zip"
+    sha256 "6afa61b391dcd16cb8890ec9f66cc4015a8a31a6e1c2b4e0c464514be1a3d722"
   end
 
   resource "pip" do
-    url "https://files.pythonhosted.org/packages/36/fa/51ca4d57392e2f69397cd6e5af23da2a8d37884a605f9e3f2d3bfdc48397/pip-19.0.3.tar.gz"
-    sha256 "6e6f197a1abfb45118dbb878b5c859a0edbdd33fd250100bc015b67fded4b9f2"
+    url "https://files.pythonhosted.org/packages/ce/ea/9b445176a65ae4ba22dce1d93e4b5fe182f953df71a145f557cffaffc1bf/pip-19.3.1.tar.gz"
+    sha256 "21207d76c1031e517668898a6b46a9fb1501c7a4710ef5dfd6a40ad9e6757ea7"
   end
 
   resource "wheel" do
-    url "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz"
-    sha256 "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
+    url "https://files.pythonhosted.org/packages/59/b0/11710a598e1e148fb7cbf9220fd2a0b82c98e94efbdecb299cb25e7f0b39/wheel-0.33.6.tar.gz"
+    sha256 "10c9da68765315ed98850f8e048347c3eb06dd81822dc2ab1d4fde9dc9702646"
   end
 
   def install
@@ -59,7 +59,7 @@ class Stackless3 < Formula
       --enable-loadable-sqlite-extensions
       --without-ensurepip
       --with-dtrace
-      --with-openssl=#{Formula["openssl"].opt_prefix}
+      --with-openssl=#{Formula["openssl@1.1"].opt_prefix}
     ]
 
     args << "--without-gcc" if ENV.compiler == :clang
@@ -217,9 +217,9 @@ class Stackless3 < Formula
     end
 
     # Help distutils find brewed stuff when building extensions
-    include_dirs = [HOMEBREW_PREFIX/"include", Formula["openssl"].opt_include,
+    include_dirs = [HOMEBREW_PREFIX/"include", Formula["openssl@1.1"].opt_include,
                     Formula["sqlite"].opt_include]
-    library_dirs = [HOMEBREW_PREFIX/"lib", Formula["openssl"].opt_lib,
+    library_dirs = [HOMEBREW_PREFIX/"lib", Formula["openssl@1.1"].opt_lib,
                     Formula["sqlite"].opt_lib]
 
     cfg = prefix/"Frameworks/Python.framework/Versions/#{xy}/lib/python#{xy}/distutils/distutils.cfg"
