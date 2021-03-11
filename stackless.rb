@@ -1,8 +1,8 @@
 class Stackless < Formula
   desc "Interpreted, interactive, object-oriented programming language"
   homepage "http://www.stackless.com"
-  url 'http://www.stackless.com/binaries/stackless-373-export.tar.xz'
-  sha256 "2cb8c7d1151196deb605d65c0b46778d392a1ed2efa623fd9f90b8f667d6a430"
+  url 'http://www.stackless.com/binaries/stackless-375-export.tar.xz'
+  sha256 "a2cfe3866f7c512660ab69c252c454ed596ebc117a4c637028934a2cec79759d"
 
   # setuptools remembers the build flags python is built with and uses them to
   # build packages later. Xcode-only systems need different flags.
@@ -64,14 +64,7 @@ class Stackless < Formula
 
   # Remove this block when upstream adds arm64 and Big Sur compatibility
   if MacOS.version >= :big_sur
-    # Upstream PRs #20171, #21114, #21224 and #21249
-    # Backport of https://github.com/python/cpython/pull/22855
-    patch do
-      url "https://raw.githubusercontent.com/Homebrew/formula-patches/33a9d63f/python/arm64-3.9.patch"
-      sha256 "167e328cf68e9ec142f483fda9fafbb903be9a47dee2826614fdc24b2fbe6e06"
-    end
-
-    # Further patch for Big Sur, remove in 3.9.2
+    # Patch for Big Sur, remove in 3.9.2
     # https://github.com/python/cpython/pull/23556
     patch do
       url "https://github.com/fxcoudert/cpython/commit/6511bf56.patch?full_index=1"
