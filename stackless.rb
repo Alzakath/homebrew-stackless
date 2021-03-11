@@ -1,21 +1,8 @@
-class PythonAT39 < Formula
+class Stackless < Formula
   desc "Interpreted, interactive, object-oriented programming language"
-  homepage "https://www.python.org/"
-  url "https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz"
-  sha256 "9c73e63c99855709b9be0b3cc9e5b072cb60f37311e8c4e50f15576a0bf82854"
-  license "Python-2.0"
-  revision 4
-
-  livecheck do
-    url "https://www.python.org/ftp/python/"
-    regex(%r{href=.*?v?(3\.9(?:\.\d+)*)/?["' >]}i)
-  end
-
-  bottle do
-    sha256 "9e3b87708ad72996720f37ce28728ebef4c7001d342ed5129149192dcedd19e7" => :big_sur
-    sha256 "4f47c66a09683ff5b4b5e5a18630c7036cb69f78c7b5ba2f2c1b55fecbce3416" => :catalina
-    sha256 "5e2da6939948506de863544a98247c9464d89e9b4a1e1dcdbf11c5baefc7d9a5" => :mojave
-  end
+  homepage "http://www.stackless.com"
+  url 'http://www.stackless.com/binaries/stackless-373-export.tar.xz'
+  sha256 "2cb8c7d1151196deb605d65c0b46778d392a1ed2efa623fd9f90b8f667d6a430"
 
   # setuptools remembers the build flags python is built with and uses them to
   # build packages later. Xcode-only systems need different flags.
@@ -323,7 +310,7 @@ class PythonAT39 < Formula
     xy = if prefix.exist?
       (prefix/"Frameworks/Python.framework/Versions").children.min.basename.to_s
     else
-      version.to_s.slice(/(3\.\d)/) || "3.9"
+      version.to_s.slice(/(3\.\d)/) || "3.7"
     end
     <<~EOS
       Python has been installed as
