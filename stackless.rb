@@ -67,8 +67,8 @@ class Stackless < Formula
     # Patch for Big Sur, remove in 3.9.2
     # https://github.com/python/cpython/pull/23556
     patch do
-      url "https://github.com/fxcoudert/cpython/commit/6511bf56.patch?full_index=1"
-      sha256 "3a34fea8a133305bc337d67acfacc36dc8f9d47a808dd592f5b0cd8c9c9384d2"
+      url "https://raw.githubusercontent.com/Alzakath/homebrew-stackless/838ed6b6b9be4a1d6314ae4ece5637464c049f89/stackless-macos-10.14.patch"
+      sha256 "e76a130ac528d5caf85d289c8f90678a222c8305002ffcf9462e32da35755084"
     end
   end
 
